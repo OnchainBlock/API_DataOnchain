@@ -1,5 +1,5 @@
 from imports import *
-from Distribution_Data.Cex_distribution import *
+from Distribution_Data.Cex import *
 
 my_server = os.environ['my_server']
 query_cex = os.environ['query_cex']
@@ -14,159 +14,122 @@ QK_Data = QK_Data.reset_index()
 
 distribution_router = APIRouter(
     prefix='/distribution',
-    tags=['distribution : 4h, Day, Week, Month']
+    tags=['distribution']
 )
 
 # CEX
 
 
-@distribution_router.get('/Cex/Day')
-async def stable():
-    day_df = create_df_Treemap(QK_Data, data, 1)
-    return day_df.to_dict(orient='records')
+@distribution_router.get('/Cex')
+async def hightlight_exchange(chioce_days: int, label: str):
+    Hientai_Data = data[data['TimeStamp'] == data['TimeStamp'].max()][[
+        'Symbols', 'USDT', 'USDC', 'BUSD']]
+    Hientai_Data = Hientai_Data.reset_index()
+    Hientai_Data['ALL_HIENTAI'] = Hientai_Data['USDT'] + \
+        Hientai_Data['USDC'] + Hientai_Data['BUSD']
+
+    QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
+
+    Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
+                        ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+    Last_data = Last_data.reset_index()
+    Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
+        Last_data['USDC_Las'] + Last_data['BUSD_Las']
+
+    DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
+    DATA_CHANGE = DATA_CHANGE.fillna(0)
+    DATA_CHANGE[f'{chioce_days}D_USDT'] = (
+        (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT_Las'])*100
+    DATA_CHANGE[f'{chioce_days}D_USDC'] = (
+        (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC_Las'])*100
+    DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
+        (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD_Las'])*100
+    DATA_CHANGE[f'{chioce_days}D_ALL'] = (
+        (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_LAS'])*100
+    DATA_CHANGE = DATA_CHANGE.fillna(0)
+
+    DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
+                                   'ALL_HIENTAI', f'{chioce_days}D_ALL']]
+    DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
+        lambda x: numerize.numerize(x, 2))
+    DATA_CHANGE_SUM.drop(
+        DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+    DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
+        columns={f'{chioce_days}D_ALL': 'PERCENTAGE'})
+    DATA_CHANGE_SUM['PERCENTAGE'] = DATA_CHANGE_SUM['PERCENTAGE'].map(
+        lambda x: round(x, 2))
+    DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
+        DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+    DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
+    if label == 'Deposit':
+        result = DATA_CHANGE_SUM[DATA_CHANGE_SUM['PERCENTAGE']
+                                 == DATA_CHANGE_SUM['PERCENTAGE'].max()]
+        return result.to_dict(orient='records')
+
+    elif label == 'Withdraw':
+        result = DATA_CHANGE_SUM[DATA_CHANGE_SUM['PERCENTAGE']
+                                 == DATA_CHANGE_SUM['PERCENTAGE'].min()]
+        return result.to_dict(orient='records')
+    else:
+        return f'Not found: {label} please choose [ Deposit, Withdraw] '
 
 
-@distribution_router.get('/Cex/Week')
-async def stable():
-    week_df = create_df_Treemap(QK_Data, data, 7)
-    return week_df.to_dict(orient='records')
+@distribution_router.get('/Cex/Treemap')
+async def Treemap(chioce_days: int, label: str):
 
+    Hientai_Data = data[data['TimeStamp'] == data['TimeStamp'].max()][[
+        'Symbols', 'USDT', 'USDC', 'BUSD']]
+    Hientai_Data = Hientai_Data.reset_index()
+    Hientai_Data['ALL_HIENTAI'] = Hientai_Data['USDT'] + \
+        Hientai_Data['USDC'] + Hientai_Data['BUSD']
 
-@distribution_router.get('/Cex/Month')
-async def stable():
-    month_df = create_df_Treemap(QK_Data, data, 30)
-    return month_df.to_dict(orient='records')
+    QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
 
+    Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
+                        ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+    Last_data = Last_data.reset_index()
+    Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
+        Last_data['USDC_Las'] + Last_data['BUSD_Las']
 
-@distribution_router.get('/Cex/Day/Total')
-async def total():
-    day_df_total = create_df_Treemap_sum(QK_Data, data, 1)
-    return day_df_total.to_dict(orient='records')
+    DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
+    DATA_CHANGE = DATA_CHANGE.fillna(0)
+    DATA_CHANGE[f'{chioce_days}D_USDT'] = (
+        (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT_Las'])*100
+    DATA_CHANGE[f'{chioce_days}D_USDC'] = (
+        (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC_Las'])*100
+    DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
+        (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD_Las'])*100
+    DATA_CHANGE[f'{chioce_days}D_ALL'] = (
+        (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_LAS'])*100
+    DATA_CHANGE = DATA_CHANGE.fillna(0)
+    DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
+                                   'ALL_HIENTAI', f'{chioce_days}D_ALL']]
+    # DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
+    #     lambda x: numerize.numerize(x, 2))
+    DATA_CHANGE_SUM.drop(
+        DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+    DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
+        columns={f'{chioce_days}D_ALL': 'PERCENTAGE'})
+    DATA_CHANGE_SUM['PERCENTAGE'] = DATA_CHANGE_SUM['PERCENTAGE'].map(
+        lambda x: round(x, 2))
+    DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
+        DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+    DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
 
+    if label == 'Usdt':
+        return Funtion_Col_Processing(DATA_CHANGE,  'Symbols', 'USDT', f'{chioce_days}D_USDT', 'USDT').rename(
+            columns={'USDT': 'VALUE'})[['Symbols', 'VALUE', 'PERCENTAGE']].to_dict(orient='records')
 
-@distribution_router.get('/Cex/Week/Total')
-async def total():
-    week_df_total = create_df_Treemap_sum(QK_Data, data, 7)
-    return week_df_total.to_dict(orient='records')
+    elif label == 'Usdc':
+        return Funtion_Col_Processing(DATA_CHANGE, 'Symbols', 'USDC', f'{chioce_days}D_USDC', 'USDC').rename(
+            columns={'USDC': 'VALUE'})[['Symbols', 'VALUE', 'PERCENTAGE']].to_dict(orient='records')
 
+    elif label == 'Busd':
+        return Funtion_Col_Processing(DATA_CHANGE, 'Symbols', 'BUSD', f'{chioce_days}D_BUSD', 'BUSD').rename(
+            columns={'BUSD': 'VALUE'})[['Symbols', 'VALUE', 'PERCENTAGE']].to_dict(orient='records')
 
-@distribution_router.get('/Cex/Month/Total')
-async def total():
-    Month_df_total = create_df_Treemap_sum(QK_Data, data, 30)
-    return Month_df_total.to_dict(orient='records')
+    elif label == 'Total':
+        return DATA_CHANGE_SUM.to_dict(orient='records')
 
-
-# Bridge
-
-
-@distribution_router.get('/Bridge/Multichain/Day/usdt')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Day/usdc')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Day/busd')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Week/usdt')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Week/usdc')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Week/busd')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Month/usdt')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Month/usdc')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Multichain/Month/busd')
-async def Multichain():
-    return {'message': 'Distribution Cex '}
-
-# Bridge Hop
-
-
-@distribution_router.get('/Bridge/Hop/Day')
-async def Hop():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Hop/Week')
-async def Hop():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Hop/Month')
-async def Hop():
-    return {'message': 'Distribution Cex '}
-
-# bridge stargate
-
-
-@distribution_router.get('/Bridge/Stargate/Day')
-async def Stargate():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Stargate/Week')
-async def Stargate():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Stargate/Month')
-async def Stargate():
-    return {'message': 'Distribution Cex '}
-
-# Bridge Celer
-
-
-@distribution_router.get('/Bridge/Celer/Day')
-async def Celer():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Celer/Week')
-async def Celer():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Celer/Month')
-async def Celer():
-    return {'message': 'Distribution Cex '}
-
-# Bridge Synapse
-
-
-@distribution_router.get('/Bridge/Synapse/Day')
-async def Synapse():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Synapse/Week')
-async def Synapse():
-    return {'message': 'Distribution Cex '}
-
-
-@distribution_router.get('/Bridge/Synapse/Month')
-async def Synapse():
-    return {'message': 'Distribution Cex '}
+    else:
+        return f'Not found: {label} please choose [Usdt , Usdc, Busd, Total] '
