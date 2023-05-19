@@ -1,3 +1,4 @@
+import sys
 from fastapi import APIRouter
 from fastapi.openapi.utils import get_openapi
 from fastapi import FastAPI
@@ -5,7 +6,7 @@ import uvicorn
 from dotenv.main import load_dotenv
 import os
 import re
-
+from typing import List
 from pathlib import Path
 import pandas as pd
 import plotly.express as px

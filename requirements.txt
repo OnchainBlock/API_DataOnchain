@@ -19,3 +19,4 @@ plotly
 numerize
 pandas
 numpy
+pydantic
