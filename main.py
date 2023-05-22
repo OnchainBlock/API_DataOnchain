@@ -29,8 +29,8 @@ app.openapi = custom_openapi
 
 app.include_router(overview_router)
 app.include_router(distribution_router)
-app.include_router(change_router)
 app.include_router(Reserve_router)
+app.include_router(change_router)
 app.include_router(Holder_router)
 
 if __name__ == '__main__':

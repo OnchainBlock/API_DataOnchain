@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/Users/dev/Thang_DataEngineer/Fast_api')
 from imports import *
 my_server = os.environ['my_server']
 query_cex = os.environ['query_cex']

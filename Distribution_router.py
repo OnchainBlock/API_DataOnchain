@@ -1,6 +1,7 @@
 from imports import *
 from Distribution_Data.Cex import *
-
+from Distribution_Data.Bridge_data import TOTAL_MULTICHAIN,Celer_cBridge,HOP,STARGATE,SYNAPSE
+from Distribution_Data.Bridge_data import *
 my_server = os.environ['my_server']
 query_cex = os.environ['query_cex']
 
@@ -133,3 +134,30 @@ async def Treemap(chioce_days: int, label: str):
 
     else:
         return f'Not found: {label} please choose [Usdt , Usdc, Busd, Total] '
+
+@distribution_router.get('/Bridge/pie')
+async def choice_bridge(label:str):
+    cols = ['EXPLORER','VALUE']
+    multichain = TOTAL_MULTICHAIN[TOTAL_MULTICHAIN['TIMESTAMP']==TOTAL_MULTICHAIN['TIMESTAMP'].max()]
+    celer = Celer_cBridge[Celer_cBridge['TIMESTAMP']==Celer_cBridge['TIMESTAMP'].max()]
+    hop = HOP[HOP['TIMESTAMP']==HOP['TIMESTAMP'].max()]
+    stargate = STARGATE[STARGATE['TIMESTAMP']==STARGATE['TIMESTAMP'].max()]
+    synapse = SYNAPSE[SYNAPSE['TIMESTAMP']==SYNAPSE['TIMESTAMP'].max()]
+    choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
+    if label not in choice_condition:
+        return f'label: {label} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]'
+    elif label=='Multichain':
+        multichain = multichain[cols]
+        return multichain.to_dict(orient='records')
+    elif label =='Celer':
+        celer = celer[cols]
+        return celer.to_dict(orient='records')
+    elif label=="Hop":
+        hop = hop[cols]
+        return hop.to_dict(orient='records')
+    elif label=='Stargate':
+        stargate = stargate[cols]
+        return stargate.to_dict(orient='records')
+    elif label=='Synapse':
+        synapse = synapse[cols]
+        return synapse.to_dict(orient='records')

@@ -2,6 +2,8 @@ from imports import *
 # from Overview_data.Cex import data
 from Overview_data.Cex import data
 from Overview_data.Dexx import DAI_pie_df, LUSD_pie, Tusd_pie, DAI, LUSD, TUSD
+from Distribution_Data.Bridge_data import TOTAL_MULTICHAIN,Celer_cBridge,HOP,STARGATE,SYNAPSE
+from Distribution_Data.Bridge_data import *
 from Overview_data.Dexx import *
 
 
@@ -71,11 +73,43 @@ async def choice_time(start: str, end: str, label: str):
 
 # Bridge Overviews
 @overview_router.get('/Bridge/pie')
-async def Bridge_pie():
-    return {'message': 'Hello this is awaiting for overview'}
+async def create_bridge_pie():
+    multichain = TOTAL_MULTICHAIN[TOTAL_MULTICHAIN['TIMESTAMP']==TOTAL_MULTICHAIN['TIMESTAMP'].max()]
+    celer = Celer_cBridge[Celer_cBridge['TIMESTAMP']==Celer_cBridge['TIMESTAMP'].max()]
+    hop = HOP[HOP['TIMESTAMP']==HOP['TIMESTAMP'].max()]
+    stargate = STARGATE[STARGATE['TIMESTAMP']==STARGATE['TIMESTAMP'].max()]
+    synapse = SYNAPSE[SYNAPSE['TIMESTAMP']==SYNAPSE['TIMESTAMP'].max()]
+    df_mul = pd.DataFrame({
+        'BRIDGE':['Multichain bridge','Celer cBridge','Hop bridge','Stargate bridge','Synapse bridge'],
+        'VALUE':[multichain['VALUE'].sum(),celer['VALUE'].sum(),hop['VALUE'].sum(),stargate['VALUE'].sum(),synapse['VALUE'].sum()]
+    })
+    return df_mul.to_dict(orient='records')
 
 
 # đoạn này sẽ có input ;{start}{end}{Bridge_name}:
 @overview_router.get('/Bridge/')
-async def choice_bridge():
-    return {'message': 'Choose Bridge you one'}
+async def choice_bridge(start:str, end:str,label:str):
+    choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
+    if label not in choice_condition:
+        return f'label: {label} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]'
+    elif label =="Multichain":
+        TOTAL_ASSETS_MULTICHAIN = create_multichain(TOTAL_MULTICHAIN)
+        TOTAL_ASSETS_MULTICHAIN = TOTAL_ASSETS_MULTICHAIN[TOTAL_ASSETS_MULTICHAIN['TIMESTAMP'].between(start,end)]
+        return TOTAL_ASSETS_MULTICHAIN.to_dict(orient='records')
+    elif label =="Celer":
+        TOTAL_ASSETS_CELER = create_celer(Celer_cBridge)
+        TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER[TOTAL_ASSETS_CELER['TIMESTAMP'].between(start,end)]
+        return TOTAL_ASSETS_CELER.to_dict(orient='records')
+    elif label =='Hop':
+        TOTAL_ASSETS_HOP = create_hop(HOP)
+        TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP[TOTAL_ASSETS_HOP['TIMESTAMP'].between(start,end)]
+        return TOTAL_ASSETS_HOP.to_dict(orient='records')
+    elif label=='Stargate':
+        TOTAL_ASSETS_STARGATE= create_starage(STARGATE)
+        TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE[TOTAL_ASSETS_STARGATE['TIMESTAMP'].between(start,end)]
+        return TOTAL_ASSETS_STARGATE.to_dict(orient='records')
+    elif label=='Synapse':
+        TOTAL_ASSETS_SYNAPSE = create_synapse(SYNAPSE)
+        TOTAL_ASSETS_SYNAPSE = TOTAL_ASSETS_SYNAPSE[TOTAL_ASSETS_SYNAPSE['TIMESTAMP'].between(start,end)]
+        return TOTAL_ASSETS_SYNAPSE.to_dict(orient='records')
+
