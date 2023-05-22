@@ -84,3 +84,54 @@ def Funtion_Col_Processing_sum(data, symbol_col_name, value_col_name, percentage
     data = data.drop(data[data[value_col_name] == 0.].index)
     data = data.rename(columns={value_col_name: 'VALUE'})
     return data
+
+
+# def hightligt_exchange(data_qk, data_hientai, chioce_days: int, label: str):
+#     Hientai_Data = data_hientai[data_hientai['TimeStamp'] == data_hientai['TimeStamp'].max()][[
+#         'Symbols', 'USDT', 'USDC', 'BUSD']]
+#     Hientai_Data = Hientai_Data.reset_index()
+#     Hientai_Data['ALL_HIENTAI'] = Hientai_Data['USDT'] + \
+#         Hientai_Data['USDC'] + Hientai_Data['BUSD']
+
+#     data_qk['TimeStamp'] = pd.to_datetime(data_qk['TimeStamp']).dt.date
+
+#     Last_data = data_qk[(data_qk['TimeStamp'] == data_qk['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
+#                         ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+#     Last_data = Last_data.reset_index()
+#     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
+#         Last_data['USDC_Las'] + Last_data['BUSD_Las']
+
+#     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
+#     DATA_CHANGE = DATA_CHANGE.fillna(0)
+#     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
+#         (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT_Las'])*100
+#     DATA_CHANGE[f'{chioce_days}D_USDC'] = (
+#         (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC_Las'])*100
+#     DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
+#         (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD_Las'])*100
+#     DATA_CHANGE[f'{chioce_days}D_ALL'] = (
+#         (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_LAS'])*100
+#     DATA_CHANGE = DATA_CHANGE.fillna(0)
+
+#     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
+#                                    'ALL_HIENTAI', f'{chioce_days}D_ALL']]
+#     DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
+#         lambda x: numerize.numerize(x, 2))
+#     DATA_CHANGE_SUM.drop(
+#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
+#         columns={f'{chioce_days}D_ALL': 'PERCENTAGE'})
+#     DATA_CHANGE_SUM['PERCENTAGE'] = DATA_CHANGE_SUM['PERCENTAGE'].map(
+#         lambda x: round(x, 2))
+#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
+#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
+#     if label == 'Deposit':
+#         return DATA_CHANGE_SUM['PERCENTAGE'].max()
+#     elif label == 'Withdraw':
+#         return DATA_CHANGE_SUM['PERCENTAGE'].min()
+#     else:
+#         return f'Not found: {label} please choose [ Deposit, Withdraw] '
+
+
+# print(hightligt_exchange(QK_Data, data, 1, 'Deposit'))
