@@ -34,4 +34,4 @@ app.include_router(change_router)
 app.include_router(Holder_router)
 
 if __name__ == '__main__':
-    uvicorn.run(app, port=8000)
+    uvicorn.run(app,host='45.76.183.129', port='8000')
