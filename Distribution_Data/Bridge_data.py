@@ -189,6 +189,9 @@ def create_multichain(data):
     data = data[cols]
     return data
 
+# eposo
+
+
 # Celer cBridge
 query_celer_cbridge = os.environ['query_celer_cBridge']
 

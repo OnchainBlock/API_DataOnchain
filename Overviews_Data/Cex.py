@@ -12,7 +12,7 @@ df['TimeStamp'] = df['TimeStamp'].apply(lambda x: pd.to_datetime(x).floor('T'))
 df = df.fillna(0)
 
 
-df['SUM'] = df['USDT'] + df['USDC']+df['BUSD']
+df['Value'] = df['USDT'] + df['USDC']+df['BUSD']
 
-df = df[['TimeStamp', 'Symbols', 'SUM']]
+df = df[['TimeStamp', 'Symbols', 'Value']].rename(columns={'Symbols':'Name'})
 df['TimeStamp'] = pd.to_datetime(df['TimeStamp'])

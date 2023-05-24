@@ -9,8 +9,7 @@ data['TimeStamp'] = data['TimeStamp'].apply(
 QK_Data = data.set_index('TimeStamp')
 QK_Data = QK_Data.between_time('6:00', '10:59')
 QK_Data = QK_Data.reset_index()
-data['SUM'] = data['USDT'] + data['USDC']+data['BUSD']
+data['Value'] = data['USDT'] + data['USDC']+data['BUSD']
 
-data = data[['TimeStamp', 'Symbols', 'SUM']]
-
+data = data[['TimeStamp', 'Symbols', 'Value']].rename(columns={'Symbols':'Name'})
 
