@@ -75,3 +75,5 @@ another = pd.DataFrame({
 Tusd_pie = df_pie[df_pie['LABEL'] != "EXPLORER"]
 # Tusd_pie = Tusd_pie.append(another,ignore_index=True)
 Tusd_pie = pd.concat([Tusd_pie, another])[['BALANCE', 'VALUE']]
+
+

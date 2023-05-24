@@ -16,28 +16,28 @@ overview_router = APIRouter(
 
 @overview_router.get('/Cex')
 async def choice_time(start: str, end: str, label: str):
-    labels = data[data['Symbols'] == label]
+    labels = data[data['Name'] == label]
     if labels.empty:
-        return {'status': 'fail', 'message': f'Label "{label}" not found.'}
+        return {f'Label "{label}" not found plase choice: ["Binance","OKX","Kucoin","Crypto.com","MEXC","Coinbase","Gate","Bitmex","Bitfinex","Houbi","Bittrex","FTX","Binance US","Coinlist","Bitstamp","FTX US"]'}
     else:
         data_json = data[data['TimeStamp'].between(start, end)]
-        data_json = data_json[data_json['Symbols'] == label]
+        data_json = data_json[data_json['Name'] == label]
         return data_json.to_dict(orient='records')
 
 
 @overview_router.get('/Cex/pie')
 async def pie_day():
     pie_df = data[data['TimeStamp'] == data['TimeStamp'].max()]
-    pie_df = pie_df.sort_values(by='SUM', ascending=False)
+    pie_df = pie_df.sort_values(by='Value', ascending=False)
     others = pie_df[4:]
     others = pd.DataFrame({
         'TimeStamp': others['TimeStamp'].unique(),
-        'Symbols': ['Others'],
-        'SUM': others['SUM'].sum()
+        'Name': ['Others'],
+        'Value': others['Value'].sum()
     })
     create_df = pd.concat([pie_df, others], ignore_index=True)
     create_df = create_df.drop(
-        create_df[create_df['SUM'] == 0.].index)
+        create_df[create_df['Value'] == 0.].index)
     return create_df.to_dict(orient='records')
 
 # DEX
