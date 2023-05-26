@@ -11,5 +11,5 @@ QK_Data = QK_Data.between_time('6:00', '10:59')
 QK_Data = QK_Data.reset_index()
 data['Value'] = data['USDT'] + data['USDC']+data['BUSD']
 
-data = data[['TimeStamp', 'Symbols', 'Value']].rename(columns={'Symbols':'Name'})
+data = data[['TimeStamp', 'Symbols', 'Value']].rename(columns={'TimeStamp':'timestamp','Symbols':'label','Value':'value'})
 

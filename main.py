@@ -22,8 +22,18 @@ def custom_openapi():
     )
     app.openapi_schema = openapi_schema
     return app.openapi_schema
-
-
+origins = [
+    "https://api.cryptoviet.info",
+    "http://45.76.183.129:8000",
+    "http://localhost:8000"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.openapi = custom_openapi
 
 

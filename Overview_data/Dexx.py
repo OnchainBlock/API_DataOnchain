@@ -25,7 +25,7 @@ another = pd.DataFrame({
 })
 DAI_pie_df = DAI_pie[DAI_pie['BALANCE'] != 'TOTAL_ASSETS']
 # DAI_pie_df = DAI_pie_df.append(another, ignore_index=True)
-DAI_pie_df = pd.concat([DAI_pie_df, another])
+DAI_pie_df = pd.concat([DAI_pie_df, another]).rename(columns={'BALANCE':'label','VALUE':'value'})
 
 # LUSD
 
@@ -35,7 +35,8 @@ LUSD['TIMESTAMP'] = LUSD['TIMESTAMP'].apply(
     lambda x: pd.to_datetime(x).floor('T'))
 LUSD['TIMESTAMP'] = pd.to_datetime(LUSD['TIMESTAMP'])
 LUSD_pie = LUSD[LUSD['TIMESTAMP'] ==
-                LUSD['TIMESTAMP'].max()][['BALANCE', 'VALUE']]
+                LUSD['TIMESTAMP'].max()][['BALANCE', 'VALUE']].rename(columns={'BALANCE':'label','VALUE':'value'})
+
 
 
 def lusd_line(LUSD):
@@ -74,6 +75,6 @@ another = pd.DataFrame({
 })
 Tusd_pie = df_pie[df_pie['LABEL'] != "EXPLORER"]
 # Tusd_pie = Tusd_pie.append(another,ignore_index=True)
-Tusd_pie = pd.concat([Tusd_pie, another])[['BALANCE', 'VALUE']]
+Tusd_pie = pd.concat([Tusd_pie, another])[['BALANCE', 'VALUE']].rename(columns={'BALANCE':'label','VALUE':'value'})
 
 
