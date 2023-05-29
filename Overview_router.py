@@ -67,18 +67,21 @@ async def pie_date(label: str):
         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
 
 
-@overview_router.get('/Dex/')
+@overview_router.get('/Dex')
 async def choice_time(start: str, end: str, label: str):
     if label == 'Lusd':
         LUSD_line = lusd_line(LUSD)
+        LUSD_line = LUSD_line[LUSD_line['TIMESTAMP'].between(start,end)]
         LUSD_line = LUSD_line.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
         return LUSD_line.to_dict(orient='records')
     elif label == 'Dai':
         dai_df = Dai_line(DAI)
+        dai_df = dai_df[dai_df['TIMESTAMP'].between(start,end)]
         dai_df = dai_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
         return dai_df.to_dict(orient='records')
     elif label == 'Tusd':
         tusd_df = Tusd_line(TUSD)
+        tusd_df = tusd_df[tusd_df['TIMESTAMP'].between(start,end)]
         tusd_df = tusd_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
         return tusd_df.to_dict(orient='records')
 
@@ -102,7 +105,7 @@ async def create_bridge_pie():
 
 
 # đoạn này sẽ có input ;{start}{end}{Bridge_name}:
-@overview_router.get('/Bridge/')
+@overview_router.get('/Bridge')
 async def choice_bridge(start:str, end:str,label:str):
     choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
     if label not in choice_condition:

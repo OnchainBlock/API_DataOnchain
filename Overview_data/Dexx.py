@@ -11,7 +11,7 @@ DAI = DAI.set_index('TIMESTAMP')
 def Dai_line(DAI):
 
     Dai_line_df = DAI[DAI['BALANCE'] == 'TOTAL_ASSETS']
-    Dai_line_df = Dai_line_df.sort_index(ascending=False).reset_index()[
+    Dai_line_df = Dai_line_df.sort_index(ascending=True).reset_index()[
         ['TIMESTAMP', 'VALUE']]
     return Dai_line_df
 
