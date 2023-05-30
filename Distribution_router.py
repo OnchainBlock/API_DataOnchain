@@ -161,3 +161,4 @@ async def choice_bridge(label:str):
     elif label=='Synapse':
         synapse = synapse[cols]
         return synapse.to_dict(orient='records')
+    

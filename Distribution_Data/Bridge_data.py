@@ -311,5 +311,5 @@ def create_bridge_pie(multichain,celer,hop,stargate,synapse,label:str):
         return synapse
     
 
-print(create_bridge_pie(TOTAL_MULTICHAIN,Celer_cBridge,HOP,STARGATE,SYNAPSE,'Multichain'))
+print(create_synapse(SYNAPSE))
 
