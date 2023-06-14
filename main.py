@@ -8,6 +8,7 @@ from Overview_router import overview_router
 # from fastapi.openapi.utils import get_openapi
 from Reserve_router import Reserve_router
 
+
 app = FastAPI()
 
 
@@ -25,6 +26,8 @@ def custom_openapi():
 origins = [
     "https://api.cryptoviet.info",
     "https://cryptoviet.site",
+    "https://cryptoviet.info",
+    "https://data.cryptoviet.info",
     "http://45.76.183.129:3000",
     "http://localhost:3000"
 ]
@@ -43,6 +46,7 @@ app.include_router(distribution_router)
 app.include_router(Reserve_router)
 app.include_router(change_router)
 app.include_router(Holder_router)
+
 
 if __name__ == '__main__':
     uvicorn.run(app,host='45.76.183.129', port='8000')

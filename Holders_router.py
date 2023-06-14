@@ -13,13 +13,13 @@ async def holder(Dex_name:str):
     if Dex_name not in choice_condition:
         return f'Dex_name: {Dex_name} is not found, plase choice another ["Dai","Lusd","Tusd"]'
     elif Dex_name =="Dai":
-        holder_dai = Top_10_holders(DAI)
+        holder_dai = Top_10_holders(DAI,1)
         return holder_dai.to_dict(orient='records')
     elif Dex_name=="Lusd":
-        holder_lusd = Top_10_holders(LUSD)
+        holder_lusd = Top_10_holders(LUSD,1)
         return holder_lusd.to_dict(orient='records')
     elif Dex_name=="Tusd":
-        holder_tusd = Top_10_holders(TUSD)
+        holder_tusd = Top_10_holders(TUSD,1)
         return holder_tusd.to_dict(orient='records')
 
 

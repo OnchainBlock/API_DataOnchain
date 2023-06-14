@@ -13,3 +13,5 @@ data['Value'] = data['USDT'] + data['USDC']+data['BUSD']
 
 data = data[['TimeStamp', 'Symbols', 'Value']].rename(columns={'TimeStamp':'timestamp','Symbols':'label','Value':'value'})
 
+
+

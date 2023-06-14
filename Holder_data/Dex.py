@@ -26,7 +26,8 @@ TUSD= pd.read_sql(query_tusd,my_server)
 TUSD['TIMESTAMP']=TUSD['TIMESTAMP'].apply(lambda x : pd.to_datetime(x).floor('T'))
 TUSD["TIMESTAMP"] = pd.to_datetime(TUSD['TIMESTAMP'])
 TUSD = TUSD.set_index('TIMESTAMP')
-def Top_10_holders(df):
+TUSD = TUSD[TUSD['LABEL']!='EXPLORER']
+def Top_10_holders(df,choice):
     '''
     TOP 10 holders
     '''
@@ -35,7 +36,7 @@ def Top_10_holders(df):
     LUSD_QK = LUSD_QK[LUSD_QK['BALANCE'] != "TOTAL_ASSETS"].reset_index()
     LUSD_QK['TIMESTAMP'] = pd.to_datetime(LUSD_QK['TIMESTAMP']).dt.date
     L_df = LUSD_QK[LUSD_QK['TIMESTAMP'] ==
-                   LUSD_QK['TIMESTAMP'].max() - datetime.timedelta(days=1)]
+                   LUSD_QK['TIMESTAMP'].max() - datetime.timedelta(days=choice)]
     cols_last = ['BALANCE', 'VALUE']
     L_df = L_df[cols_last].rename(
         columns={'BALANCE': 'BALANCE_QK', 'VALUE': 'VL_QK'}).reset_index()

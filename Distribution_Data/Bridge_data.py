@@ -1,6 +1,30 @@
+# import sys
+# sys.path.append('/Users/dev/Thang_DataEngineer/Fast_api')
+# from imports import *
+
 import sys
-sys.path.append('/Users/dev/Thang_DataEngineer/Fast_api')
-from imports import *
+from fastapi import APIRouter
+from fastapi.openapi.utils import get_openapi
+from fastapi import FastAPI,Response
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+from dotenv.main import load_dotenv
+import os
+import re
+from typing import List
+from pathlib import Path
+import pandas as pd
+import plotly.express as px
+import numpy as np
+from numerize import numerize
+import datetime
+import _datetime
+from sqlalchemy import create_engine
+import pandas as pd
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+pd.options.mode.chained_assignment = None
+load_dotenv()
 
 my_server = os.environ['my_server']
 query_bridge = os.environ['query_multichain']
@@ -156,6 +180,8 @@ def proces_Data_Multichain():
     DATA = processing_Data(DF_MULTICHAIN, n_label, n_explorer)
     return DATA
 
+# Bridge_Mul = proces_Data_Multichain()
+
 def TOTAL_ASSETS(data, explorer):
     ''' 
     FUNTION: Summary all value stabelcoin the same explorer and transfer another dataframe
@@ -176,17 +202,20 @@ Etherscan = TOTAL_ASSETS(Bridge_line,'Ethereum')
 Polygonscan = TOTAL_ASSETS(Bridge_line,'Polygon')
 Moonriver = TOTAL_ASSETS(Bridge_line,'Moonriver')
 Moonbeam = TOTAL_ASSETS(Bridge_line,'Moonbeam')
-Bscscan = TOTAL_ASSETS(Bridge_line,'Bscscan')
-Avalanchescan = TOTAL_ASSETS(Bridge_line,'Avalanchescan')
-Fantomscan = TOTAL_ASSETS(Bridge_line,'Fantomscan')
+Bscscan = TOTAL_ASSETS(Bridge_line,'BSC')
+Avalanchescan = TOTAL_ASSETS(Bridge_line,'Avalanche')
+Fantomscan = TOTAL_ASSETS(Bridge_line,'Fantom')
 Optimsm = TOTAL_ASSETS(Bridge_line,'Optimsm')
 Arbitrum = TOTAL_ASSETS(Bridge_line,'Arbitrum')
-Kavascan = TOTAL_ASSETS(Bridge_line,'Kavascan')
+Kavascan = TOTAL_ASSETS(Bridge_line,'Kava')
 Dogechain = TOTAL_ASSETS(Bridge_line,'Dogechain')
 TOTAL_MULTICHAIN = pd.concat([Etherscan,Polygonscan,Moonriver,Moonbeam,Bscscan,Avalanchescan,Fantomscan,Optimsm,Arbitrum,Kavascan,Dogechain])
 def create_multichain(data):
     cols = ['TIMESTAMP','VALUE','EXPLORER']
     data = data[cols]
+    data =data.groupby(['TIMESTAMP','EXPLORER'])['VALUE'].sum()
+    data = data.reset_index()
+    # data = data.sort_values(by=['VALUE'],ascending=False)
     return data
 
 # eposo
@@ -203,6 +232,7 @@ Celer_cBridge['TIMESTAMP'] = pd.to_datetime(Celer_cBridge['TIMESTAMP'])
 def create_celer(data):
     TOTAL_ASSETS_CELER =data.groupby(['TIMESTAMP','EXPLORER'])['VALUE'].sum()
     TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER.reset_index()
+    # TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER.sort_values(by=['VALUE'])
     return TOTAL_ASSETS_CELER
 
 
@@ -219,6 +249,7 @@ def create_hop(data):
     cols = ['TIMESTAMP','VALUE','EXPLORER']
     TOTAL_ASSETS_HOP = data.groupby(['TIMESTAMP','EXPLORER'])['VALUE'].sum()
     TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP.reset_index()
+    # TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP.sort_values(by=['VALUE'])
     TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP[cols]
     TOTAL_ASSETS_HOP= rename(TOTAL_ASSETS_HOP)
     return TOTAL_ASSETS_HOP
@@ -238,6 +269,7 @@ def create_starage(data):
     cols = ['TIMESTAMP','VALUE','EXPLORER']
     TOTAL_ASSETS_STARGATE =data.groupby(['TIMESTAMP','EXPLORER'])['VALUE'].sum()
     TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE.reset_index()
+    # TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE.sort_values(by=['VALUE'])
     TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE[cols]
     TOTAL_ASSETS_STARGATE = rename(TOTAL_ASSETS_STARGATE)
     return TOTAL_ASSETS_STARGATE
@@ -255,6 +287,7 @@ def create_synapse(data):
 
     TOTAL_ASSETS_SYNAPSE =SYNAPSE.groupby(['TIMESTAMP','EXPLORER'])['VALUE'].sum()
     TOTAL_ASSETS_SYNAPSE = TOTAL_ASSETS_SYNAPSE.reset_index()
+    # TOTAL_ASSETS_SYNAPSE = TOTAL_ASSETS_SYNAPSE.sort_values(by=['VALUE'])
     TOTAL_ASSETS_SYNAPSE = TOTAL_ASSETS_SYNAPSE[cols]
     TOTAL_ASSETS_SYNAPSE = rename(TOTAL_ASSETS_SYNAPSE)
     return TOTAL_ASSETS_SYNAPSE
@@ -310,6 +343,24 @@ def create_bridge_pie(multichain,celer,hop,stargate,synapse,label:str):
         synapse = synapse[cols]
         return synapse
     
+multichain_pie = create_multichain(Bridge_line)
+multichain_pie = multichain_pie.reset_index()
+multichain_pie = multichain_pie[multichain_pie['TIMESTAMP']==multichain_pie['TIMESTAMP'].max()]
+multichain_pie = multichain_pie.sort_values(by=['VALUE'],ascending=False)
 
-print(create_synapse(SYNAPSE))
+
+celer_pie = create_celer(Celer_cBridge)
+celer_pie= celer_pie.reset_index()
+celer_pie = celer_pie[celer_pie['TIMESTAMP']==celer_pie['TIMESTAMP'].max()]
+celer_pie = celer_pie.sort_values(by=['VALUE'],ascending=False)
+
+hop_pie = create_hop(HOP).reset_index()
+hop_pie = hop_pie[hop_pie['TIMESTAMP']==hop_pie['TIMESTAMP'].max()]
+hop_pie = hop_pie.sort_values(by=['VALUE'],ascending=False)
+stargate_pie = create_starage(STARGATE).reset_index()
+stargate_pie = stargate_pie[stargate_pie['TIMESTAMP']==stargate_pie['TIMESTAMP'].max()]
+stargate_pie = stargate_pie.sort_values(by=['VALUE'],ascending=False)
+synapse_pie = create_synapse(SYNAPSE).reset_index()
+synapse_pie = synapse_pie[synapse_pie['TIMESTAMP']==synapse_pie['TIMESTAMP'].max()]
+synapse_pie = synapse_pie.sort_values(by=['VALUE'],ascending=False)
 

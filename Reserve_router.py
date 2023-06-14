@@ -21,9 +21,10 @@ async def reserve(start: str, end: str):
     data_tier1 = data.loc[data['Symbols'].isin(
         ['OKX', 'Kucoin', 'MEXC', 'Crypto.com', 'Coinbase', 'Gate'])]
     n_labels = data_tier1['Symbols'].unique()
-
-    data_tier1_json = data_tier1[data_tier1['TimeStamp'].between(
-        start, end)]
+    data_tier1['TIME'] = pd.to_datetime(data_tier1['TimeStamp']).dt.date
+    data_tier1['TIME'] = pd.to_datetime(data_tier1['TIME'])
+    data_tier1_json = data_tier1[data_tier1['TIME'].between(
+        start, end)].drop(columns=['TIME'])
     data_tier1_json = data_tier1_json.rename(columns={'TimeStamp':'timestamp','Symbols':'label','SUM':'value'})
     return data_tier1_json.to_dict(orient='records')
 
@@ -33,7 +34,10 @@ async def reserve(start: str, end: str):
     data_tier1 = data.loc[data['Symbols'].isin(
         ['Bitfinex', 'Bitmex', 'Houbi', 'Bittrex', 'FTX'])]
     n_labels = data_tier1['Symbols'].unique()
-
+    data_tier1['TIME'] = pd.to_datetime(data_tier1['TimeStamp']).dt.date
+    data_tier1['TIME'] = pd.to_datetime(data_tier1['TIME'])
+    data_tier1_json = data_tier1[data_tier1['TIME'].between(
+        start, end)].drop(columns=['TIME'])
     data_tier1_json = data_tier1[data_tier1['TimeStamp'].between(
         start, end)]
     data_tier1_json = data_tier1_json.rename(columns={'TimeStamp':'timestamp','Symbols':'label','SUM':'value'})
@@ -46,7 +50,9 @@ async def reserve(start: str, end: str):
         ['Binance US', 'Coinlist', 'Bitstamp', 'FTX US'])]
     n_labels = data_tier1['Symbols'].unique()
 
-    data_tier1_json = data_tier1[data_tier1['TimeStamp'].between(
-        start, end)]
+    data_tier1['TIME'] = pd.to_datetime(data_tier1['TimeStamp']).dt.date
+    data_tier1['TIME'] = pd.to_datetime(data_tier1['TIME'])
+    data_tier1_json = data_tier1[data_tier1['TIME'].between(
+        start, end)].drop(columns=['TIME'])
     data_tier1_json = data_tier1_json.rename(columns={'TimeStamp':'timestamp','Symbols':'label','SUM':'value'})
     return data_tier1_json.to_dict(orient='records')
