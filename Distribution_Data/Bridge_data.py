@@ -364,3 +364,5 @@ synapse_pie = create_synapse(SYNAPSE).reset_index()
 synapse_pie = synapse_pie[synapse_pie['TIMESTAMP']==synapse_pie['TIMESTAMP'].max()]
 synapse_pie = synapse_pie.sort_values(by=['VALUE'],ascending=False)
 
+#test_show all in line chart Bridge
+

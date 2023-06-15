@@ -253,26 +253,36 @@ async def choice_bridge(start:str, end:str,label:str):
         return f'label: {label} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]'
     elif label =="Multichain":
         TOTAL_ASSETS_MULTICHAIN = create_multichain(TOTAL_MULTICHAIN)
-        TOTAL_ASSETS_MULTICHAIN = TOTAL_ASSETS_MULTICHAIN[TOTAL_ASSETS_MULTICHAIN['TIMESTAMP'].between(start,end)]
+        TOTAL_ASSETS_MULTICHAIN['TIME'] = pd.to_datetime(TOTAL_ASSETS_MULTICHAIN['TIMESTAMP']).dt.date
+        TOTAL_ASSETS_MULTICHAIN['TIME'] = pd.to_datetime(TOTAL_ASSETS_MULTICHAIN['TIME'])
+        TOTAL_ASSETS_MULTICHAIN = TOTAL_ASSETS_MULTICHAIN[TOTAL_ASSETS_MULTICHAIN['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_MULTICHAIN = TOTAL_ASSETS_MULTICHAIN.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
         return TOTAL_ASSETS_MULTICHAIN.to_dict(orient='records')
     elif label =="Celer":
         TOTAL_ASSETS_CELER = create_celer(Celer_cBridge)
-        TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER[TOTAL_ASSETS_CELER['TIMESTAMP'].between(start,end)]
+        TOTAL_ASSETS_CELER['TIME'] = pd.to_datetime(TOTAL_ASSETS_CELER['TIMESTAMP']).dt.date
+        TOTAL_ASSETS_CELER['TIME'] = pd.to_datetime(TOTAL_ASSETS_CELER['TIME'])
+        TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER[TOTAL_ASSETS_CELER['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_CELER  = TOTAL_ASSETS_CELER.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
         return TOTAL_ASSETS_CELER.to_dict(orient='records')
     elif label =='Hop':
         TOTAL_ASSETS_HOP = create_hop(HOP)
-        TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP[TOTAL_ASSETS_HOP['TIMESTAMP'].between(start,end)]
+        TOTAL_ASSETS_HOP['TIME'] = pd.to_datetime(TOTAL_ASSETS_HOP['TIMESTAMP']).dt.date
+        TOTAL_ASSETS_HOP['TIME'] = pd.to_datetime(TOTAL_ASSETS_HOP['TIME'])
+        TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP[TOTAL_ASSETS_HOP['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
         return TOTAL_ASSETS_HOP.to_dict(orient='records')
     elif label=='Stargate':
         TOTAL_ASSETS_STARGATE= create_starage(STARGATE)
-        TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE[TOTAL_ASSETS_STARGATE['TIMESTAMP'].between(start,end)]
+        TOTAL_ASSETS_STARGATE['TIME'] = pd.to_datetime(TOTAL_ASSETS_STARGATE['TIMESTAMP']).dt.date
+        TOTAL_ASSETS_STARGATE['TIME'] = pd.to_datetime(TOTAL_ASSETS_STARGATE['TIME'])
+        TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE[TOTAL_ASSETS_STARGATE['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
         return TOTAL_ASSETS_STARGATE.to_dict(orient='records')
     elif label=='Synapse':
         TOTAL_ASSETS_SYNAPSE = create_synapse(SYNAPSE)
-        TOTAL_ASSETS_SYNAPSE = TOTAL_ASSETS_SYNAPSE[TOTAL_ASSETS_SYNAPSE['TIMESTAMP'].between(start,end)]
+        TOTAL_ASSETS_SYNAPSE['TIME'] = pd.to_datetime(TOTAL_ASSETS_SYNAPSE['TIMESTAMP']).dt.date
+        TOTAL_ASSETS_SYNAPSE['TIME'] = pd.to_datetime(TOTAL_ASSETS_SYNAPSE['TIME'])
+        TOTAL_ASSETS_SYNAPSE = TOTAL_ASSETS_SYNAPSE[TOTAL_ASSETS_SYNAPSE['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_SYNAPSE= TOTAL_ASSETS_SYNAPSE.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
         return TOTAL_ASSETS_SYNAPSE.to_dict(orient='records')

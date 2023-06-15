@@ -13,4 +13,4 @@ data['SUM'] = data['USDT'] + data['USDC']+data['BUSD']
 data = data[['TimeStamp', 'Symbols', 'SUM']]
 data = data[data['TimeStamp'] == data['TimeStamp'].max()]
 
-print(data.sort_values(by=['SUM'], ascending=False)['Symbols'].unique())
+

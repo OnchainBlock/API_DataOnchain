@@ -38,8 +38,6 @@ async def reserve(start: str, end: str):
     data_tier1['TIME'] = pd.to_datetime(data_tier1['TIME'])
     data_tier1_json = data_tier1[data_tier1['TIME'].between(
         start, end)].drop(columns=['TIME'])
-    data_tier1_json = data_tier1[data_tier1['TimeStamp'].between(
-        start, end)]
     data_tier1_json = data_tier1_json.rename(columns={'TimeStamp':'timestamp','Symbols':'label','SUM':'value'})
     return data_tier1_json.to_dict(orient='records')
 
