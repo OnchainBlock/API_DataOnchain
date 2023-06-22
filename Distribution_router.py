@@ -40,13 +40,13 @@ async def hightlight_exchange(chioce_days: int, label: str):
     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
     DATA_CHANGE = DATA_CHANGE.fillna(0)
     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
-        (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT_Las'])*100
+        (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT'])*100
     DATA_CHANGE[f'{chioce_days}D_USDC'] = (
-        (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC_Las'])*100
+        (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC'])*100
     DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
-        (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD_Las'])*100
+        (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD'])*100
     DATA_CHANGE[f'{chioce_days}D_ALL'] = (
-        (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_LAS'])*100
+        (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_HIENTAI'])*100
     DATA_CHANGE = DATA_CHANGE.fillna(0)
 
     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
@@ -96,13 +96,14 @@ async def Treemap(chioce_days: int, label: str):
     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
     DATA_CHANGE = DATA_CHANGE.fillna(0)
     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
-        (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT_Las'])*100
+        (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT'])*100
     DATA_CHANGE[f'{chioce_days}D_USDC'] = (
-        (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC_Las'])*100
+        (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC'])*100
     DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
-        (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD_Las'])*100
+        (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD'])*100
     DATA_CHANGE[f'{chioce_days}D_ALL'] = (
-        (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_LAS'])*100
+        (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_HIENTAI'])*100
+    
     DATA_CHANGE = DATA_CHANGE.fillna(0)
 
     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
@@ -118,6 +119,7 @@ async def Treemap(chioce_days: int, label: str):
     DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
+
   
     if label =='Busd':
         cols_busd = ['Symbols','BUSD',f'{chioce_days}D_BUSD']
@@ -126,6 +128,7 @@ async def Treemap(chioce_days: int, label: str):
         BUSD = BUSD.drop(BUSD[BUSD[f'{chioce_days}D_BUSD'] == 0.00].index)
         BUSD[f'{chioce_days}D_BUSD'] = BUSD[f'{chioce_days}D_BUSD'].map(lambda x: round(x, 2))
         BUSD = BUSD.rename(columns={'BUSD':'VALUE',f'{chioce_days}D_BUSD':'PERCENTAGE'})
+        BUSD['VL_CHANGE'] = abs(BUSD['VALUE']*(BUSD['PERCENTAGE']/100))
        
         BUSD = BUSD.sort_values(by = ['VALUE'], ascending=False)
         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
@@ -138,6 +141,8 @@ async def Treemap(chioce_days: int, label: str):
         USDC = USDC.drop(USDC[USDC[f'{chioce_days}D_USDC'] == 0.00].index)
         USDC[f'{chioce_days}D_USDC'] = USDC[f'{chioce_days}D_USDC'].map(lambda x: round(x, 2))
         USDC = USDC.rename(columns={'USDC':'VALUE',f'{chioce_days}D_USDC':'PERCENTAGE'})
+        USDC['VL_CHANGE'] = abs(USDC['VALUE']*(USDC['PERCENTAGE']/100))
+        USDC = USDC.sort_values(by = ['VALUE'], ascending=False)
         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
         USDC['size'] = [i for i in size[:len(USDC)]]
         return USDC.to_dict(orient='records')
@@ -148,12 +153,15 @@ async def Treemap(chioce_days: int, label: str):
         USDT = USDT.drop(USDT[USDT[f'{chioce_days}D_USDT'] == 0.00].index)
         USDT[f'{chioce_days}D_USDT'] = USDT[f'{chioce_days}D_USDT'].map(lambda x: round(x, 2))
         USDT = USDT.rename(columns={'USDT':'VALUE',f'{chioce_days}D_USDT':'PERCENTAGE'})
+        USDT['VL_CHANGE'] = abs(USDT['VALUE']*(USDT['PERCENTAGE']/100))
+        USDT = USDT.sort_values(by = ['VALUE'], ascending=False)
         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
         USDT['size'] = [i for i in size[:len(USDT)]]
         return USDT.to_dict(orient='records')
     elif label=="Total":
         DATA_CHANGE_SUM = DATA_CHANGE_SUM.replace([np.inf, -np.inf], 0).fillna(0)
         DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(DATA_CHANGE_SUM[DATA_CHANGE_SUM['PERCENTAGE'] == 0.00].index)
+        DATA_CHANGE_SUM['VL_CHANGE'] = abs(DATA_CHANGE_SUM['VALUE']*(DATA_CHANGE_SUM['PERCENTAGE']/100))
         DATA_CHANGE_SUM = DATA_CHANGE_SUM.sort_values(by = ['VALUE'],ascending=False)
         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
         DATA_CHANGE_SUM['size'] = [i for i in size[:len(DATA_CHANGE_SUM)]]

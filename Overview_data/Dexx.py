@@ -1,4 +1,27 @@
-from imports import *
+import sys
+from fastapi import APIRouter
+from fastapi.openapi.utils import get_openapi
+from fastapi import FastAPI,Response
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+from dotenv.main import load_dotenv
+import os
+import re
+from typing import List
+from pathlib import Path
+import pandas as pd
+import plotly.express as px
+import numpy as np
+from numerize import numerize
+import datetime
+import _datetime
+from sqlalchemy import create_engine
+import pandas as pd
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+pd.options.mode.chained_assignment = None
+load_dotenv()
+
 my_server = os.environ['my_server']
 query_dai = os.environ['query_dai']
 DAI = pd.read_sql(query_dai, my_server)
@@ -78,8 +101,10 @@ Tusd_pie = df_pie[df_pie['LABEL'] != "EXPLORER"]
 Tusd_pie = pd.concat([Tusd_pie, another])[['BALANCE', 'VALUE']].rename(columns={'BALANCE':'label','VALUE':'value'})
 
 Dex_pie = pd.DataFrame({
-    'Dai':DAI_pie[DAI_pie['BALANCE']=="TOTAL_ASSETS"]['VALUE'].values,
-    'Lusd':[sum(LUSD_pie['value'])],
-    'Tusd':[sum(df_pie['VALUE'])]
+    # 'Dai':DAI_pie[DAI_pie['BALANCE']=="TOTAL_ASSETS"]['VALUE'].values,
+    # 'Lusd':[sum(LUSD_pie['value'])],
+    # 'Tusd':[sum(df_pie['VALUE'])]
+    'label':['Dai','Lusd','Tusd'],
+    'value':[DAI_pie[DAI_pie['BALANCE']=="TOTAL_ASSETS"]['VALUE'].values[0],sum(LUSD_pie['value']),sum(df_pie['VALUE'])]
 })
 
