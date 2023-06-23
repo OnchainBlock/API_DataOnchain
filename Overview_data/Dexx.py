@@ -46,6 +46,7 @@ another = pd.DataFrame({
     'BALANCE': 'another',
     'VALUE': [float(another)],
 })
+
 DAI_pie_df = DAI_pie[DAI_pie['BALANCE'] != 'TOTAL_ASSETS']
 # DAI_pie_df = DAI_pie_df.append(another, ignore_index=True)
 DAI_pie_df = pd.concat([DAI_pie_df, another]).rename(columns={'BALANCE':'label','VALUE':'value'})
