@@ -120,7 +120,7 @@ async def create_bridge_pie():
     stargate = STARGATE[STARGATE['TIMESTAMP']==STARGATE['TIMESTAMP'].max()]
     synapse = SYNAPSE[SYNAPSE['TIMESTAMP']==SYNAPSE['TIMESTAMP'].max()]
     df_mul = pd.DataFrame({
-        'label':['Multichain','Celer ','Hop','Stargate','Synapse'],
+        'label':['Multichain','Celer','Hop','Stargate','Synapse'],
         'name':[multichain['VALUE'].sum(),celer['VALUE'].sum(),hop['VALUE'].sum(),stargate['VALUE'].sum(),synapse['VALUE'].sum()]
     })
     return df_mul.to_dict(orient='records')
