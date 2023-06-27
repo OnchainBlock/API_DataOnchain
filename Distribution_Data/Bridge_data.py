@@ -228,6 +228,8 @@ Celer_cBridge = pd.read_sql(query_celer_cbridge,my_server)
 
 Celer_cBridge['TIMESTAMP']=Celer_cBridge['TIMESTAMP'].apply(lambda x : pd.to_datetime(x).floor('T'))
 Celer_cBridge['TIMESTAMP'] = pd.to_datetime(Celer_cBridge['TIMESTAMP'])
+
+Celer_cBridge['EXPLORER'] = Celer_cBridge['EXPLORER'].replace({'Polygonscan':'Polygon','Bscscan':'BSC','Avalanchescan':'Avalanche','Fantomscan':'Fantom'})
 #line total assets
 def create_celer(data):
     TOTAL_ASSETS_CELER =data.groupby(['TIMESTAMP','EXPLORER'])['VALUE'].sum()
@@ -235,7 +237,7 @@ def create_celer(data):
     # TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER.sort_values(by=['VALUE'])
     return TOTAL_ASSETS_CELER
 
-
+print(Celer_cBridge['EXPLORER'].unique())
 # Hop bridge
 query_hop_bridge = os.environ['query_hop_bridge']
 HOP = pd.read_sql(query_hop_bridge,my_server)
