@@ -5,6 +5,7 @@ from change_router import change_router
 from Distribution_router import distribution_router
 from Holders_router import Holder_router
 from Overview_router import overview_router
+from ETH_router import eth_router
 # from fastapi.openapi.utils import get_openapi
 from Reserve_router import Reserve_router
 
@@ -29,7 +30,9 @@ origins = [
     "https://cryptoviet.info",
     "https://data.cryptoviet.info",
     "http://45.76.183.129:3000",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://cryptoviet-info.vercel.app",
+    "https://dataonchain.xyz",
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -46,7 +49,7 @@ app.include_router(distribution_router)
 app.include_router(Reserve_router)
 app.include_router(change_router)
 app.include_router(Holder_router)
-
+app.include_router(eth_router)
 
 if __name__ == '__main__':
     uvicorn.run(app,host='45.76.183.129', port='8000')
