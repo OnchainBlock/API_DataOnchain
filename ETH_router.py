@@ -22,16 +22,16 @@ QK_df_treemap = QK_df_treemap.between_time('6:00', '10:59')
 QK_df_treemap = QK_df_treemap.reset_index()
 QK_df_treemap['time'] = pd.to_datetime(QK_df_treemap['time']).dt.date
 
-@eth_router.get('/eth/pie')
+@eth_router.get('/eth/pie_eth')
 async def choice():
-    df_pie = ETH_psql[ETH_psql['time'] == ETH_psql['time'].max()]
+    df_pie = ETH_psql.loc[ETH_psql['time'] == ETH_psql['time'].max()] 
     return df_pie.to_dict(orient='records')
 
 
 @eth_router.get('/eth/treemap')
-async def Treemap_ETH(choise_days:int):
+async def Treemap_ETH(choice_days:int):
     hientai_df =df_treemap[df_treemap['time'] == df_treemap['time'].max()][['value','balance']]
-    quakhu_df =QK_df_treemap[QK_df_treemap['time'] == QK_df_treemap['time'].max() - datetime.timedelta(days=choise_days)][['value','balance']].rename(columns={'value':'vl_qk','balance':'balance_qk'})
+    quakhu_df =QK_df_treemap[QK_df_treemap['time'] == QK_df_treemap['time'].max() - datetime.timedelta(days=choice_days)][['value','balance']].rename(columns={'value':'vl_qk','balance':'balance_qk'})
     hientai_df = hientai_df.sort_values(by=['value'],ascending=False).reset_index()
     lst_blance = list(hientai_df['balance'].unique())
     quakhu_df = quakhu_df.set_index('balance_qk')
