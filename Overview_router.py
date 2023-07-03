@@ -12,31 +12,10 @@ overview_router = APIRouter(
     tags=['overview'],
 
 )
-# @overview_router.get('/Cex/test')
-# async def choice_time(start: str, end: str, label: str):
-#     labels = data[data['Name'] == label]
-#     headers = {
-#         'Content-Type': 'application/json',
-#     }
-#     if labels.empty:
-#         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
-   
-#     else:
-#         data_json = data[data['TimeStamp'].between(start, end)]
-#         data_json = data_json[data_json['Name'] == label]
-#         return Response(data_json.to_json(orient='records'),headers=headers)
+
 
 @overview_router.get('/Cex')
-# async def choice_time(start: str, end: str, label: str):
-#     labels = data[data['label'] == label]
-#     if labels.empty:
-#         return {f'Label "{label}" not found plase choice: ["Binance","OKX","Kucoin","Crypto.com","MEXC","Coinbase","Gate","Bitmex","Bitfinex","Houbi","Bittrex","FTX","Binance US","Coinlist","Bitstamp","FTX US"]'}
-#     else:
-#         data['TIME'] = pd.to_datetime(data['timestamp']).dt.date
-#         data['TIME'] = pd.to_datetime(data['TIME'])
-#         data_json = data[data['TIME'].between(start, end)].drop(['TIME'])
-#         data_json = data_json[data_json['label'] == label]
-#         return data_json.to_dict(orient='records')
+
 async def choice_time(start: str, end: str, label: str):
     labels = data[data['label'] == label]
     if labels.empty:
@@ -68,6 +47,16 @@ async def pie_day():
 # DEX
 
 
+# @overview_router.get('/Dex/pie')
+# async def pie_date(label: str):
+#     if label == 'Dai':
+#         return DAI_pie_df.to_dict(orient='records')
+#     elif label == 'Lusd':
+#         return LUSD_pie.to_dict(orient='records')
+#     elif label == 'Tusd':
+#         return Tusd_pie.to_dict(orient='records')
+#     else:
+#         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
 @overview_router.get('/Dex/pie')
 async def pie_date(label: str):
     if label == 'Dai':
@@ -78,7 +67,7 @@ async def pie_date(label: str):
         return Tusd_pie.to_dict(orient='records')
     else:
         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
-        
+
 @overview_router.get('/Dex/pie/total')
 async def pie_data():
     return Dex_pie.to_dict(orient='records')
@@ -87,28 +76,53 @@ async def pie_data():
 async def choice_time(start: str, end: str, label: str):
     if label == 'Lusd':
         LUSD_line = lusd_line(LUSD)
-        LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIMESTAMP']).dt.date
-        LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIME'])
-        LUSD_line = LUSD_line[LUSD_line['TIME'].between(start,end)].drop(columns=['TIME'])
+        LUSD_line['time']= pd.to_datetime(LUSD_line['TIMESTAMP']).dt.date
+        LUSD_line['time'] = pd.to_datetime(LUSD_line['time'])
+        LUSD_line = LUSD_line[LUSD_line['time'].between(start,end)].drop(columns={'time'})
         LUSD_line = LUSD_line.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
         return LUSD_line.to_dict(orient='records')
     elif label == 'Dai':
         dai_df = Dai_line(DAI)
-        dai_df['TIME'] = pd.to_datetime(dai_df['TIMESTAMP']).dt.date
-        dai_df['TIME'] = pd.to_datetime(dai_df['TIME'])
-        dai_df = dai_df[dai_df['TIME'].between(start,end)].drop(columns=['TIME'])
+        dai_df['time']= pd.to_datetime(dai_df['TIMESTAMP']).dt.date
+        dai_df['time'] = pd.to_datetime(dai_df['time'])
+        dai_df = dai_df[dai_df['time'].between(start,end)].drop(columns={'time'})
         dai_df = dai_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
         return dai_df.to_dict(orient='records')
     elif label == 'Tusd':
         tusd_df = Tusd_line(TUSD)
-        tusd_df['TIME'] = pd.to_datetime(tusd_df['TIMESTAMP']).dt.date
-        tusd_df['TIME'] = pd.to_datetime(tusd_df['TIME'])
-        tusd_df = tusd_df[tusd_df['TIME'].between(start,end)].drop(columns=['TIME'])
+        tusd_df['time']= pd.to_datetime(tusd_df['TIMESTAMP']).dt.date
+        tusd_df['time'] = pd.to_datetime(tusd_df['time'])
+        tusd_df = tusd_df[tusd_df['time'].between(start,end)].drop(columns={'time'})
         tusd_df = tusd_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
         return tusd_df.to_dict(orient='records')
 
     else:
         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
+# async def choice_time(start: str, end: str, label: str):
+#     if label == 'Lusd':
+#         LUSD_line = lusd_line(LUSD)
+#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIMESTAMP']).dt.date
+#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIME'])
+#         LUSD_line = LUSD_line[LUSD_line['TIME'].between(start,end)].drop(columns=['TIME'])
+#         LUSD_line = LUSD_line.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
+#         return LUSD_line.to_dict(orient='records')
+#     elif label == 'Dai':
+#         dai_df = Dai_line(DAI)
+#         dai_df['TIME'] = pd.to_datetime(dai_df['TIMESTAMP']).dt.date
+#         dai_df['TIME'] = pd.to_datetime(dai_df['TIME'])
+#         dai_df = dai_df[dai_df['TIME'].between(start,end)].drop(columns=['TIME'])
+#         dai_df = dai_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
+#         return dai_df.to_dict(orient='records')
+#     elif label == 'Tusd':
+#         tusd_df = Tusd_line(TUSD)
+#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIMESTAMP']).dt.date
+#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIME'])
+#         tusd_df = tusd_df[tusd_df['TIME'].between(start,end)].drop(columns=['TIME'])
+#         tusd_df = tusd_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
+#         return tusd_df.to_dict(orient='records')
+
+#     else:
+#         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
 
 
 # Bridge Overviews
