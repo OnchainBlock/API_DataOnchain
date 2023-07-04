@@ -25,10 +25,15 @@ QK_df_treemap['time'] = pd.to_datetime(QK_df_treemap['time']).dt.date
 def capitalize_column(dataframe, column_name):
     dataframe[column_name] = dataframe[column_name].str.capitalize()
     return dataframe
+def change_name(df,cols:str):
+    df[cols] = df[cols].replace({'Crypto':'Crypto.com','Binance_us':'Binance US','Mexc':'MEXC','Okx':'OKX'})
+    return df
+
 @eth_router.get('/eth/pie_eth')
 async def choice():
     df_pie = ETH_psql.loc[ETH_psql['time'] == ETH_psql['time'].max()][['time','value','balance']]
     df_pie = capitalize_column(df_pie,'balance')
+    df_pie = change_name(df_pie,'balance')
     return df_pie.to_dict(orient='records')
 
 
@@ -49,6 +54,7 @@ async def Treemap_ETH(choice_days:int):
     eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','vl_change':'VL_CHANGE','percentage':'PERCENTAGE'})
     eth_tmap =eth_tmap.drop(eth_tmap[eth_tmap['PERCENTAGE']==0.00].index)
     eth_tmap = capitalize_column(eth_tmap,'Symbols')
+    eth_tmap = change_name(eth_tmap,'Symbols')
     return eth_tmap.to_dict(orient='records')
 
 
@@ -62,6 +68,7 @@ async def hightlight_ETH(choice_days:int,label:str):
     quakhu_df =quakhu_df.loc[lst_blance].reset_index()
     eth_tmap = pd.concat([hientai_df,quakhu_df],axis=1)
     eth_tmap['VALUE_SHOW'] = eth_tmap['value'].map(lambda x : numerize.numerize(x))
+    eth_tmap['vl_change'] = (eth_tmap['value'] - eth_tmap['vl_qk'])
     eth_tmap['percentage'] = round((eth_tmap['vl_change']/eth_tmap['value']) *100,2)
     cols = ['balance','value','VALUE_SHOW','percentage']
     eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','percentage':'PERCENTAGE'})
@@ -69,6 +76,7 @@ async def hightlight_ETH(choice_days:int,label:str):
     cols = ['Symbols','VALUE','VALUE_SHOW','PERCENTAGE']
     eth_tmap = eth_tmap[cols]
     eth_tmap = capitalize_column(eth_tmap,'Symbols')
+    eth_tmap = change_name(eth_tmap,'Symbols')
     if label=="Deposit":
         deposit = eth_tmap[eth_tmap['PERCENTAGE'] == eth_tmap['PERCENTAGE'].max()]
         return deposit.to_dict(orient="records")
@@ -81,10 +89,12 @@ async def hightlight_ETH(choice_days:int,label:str):
 # netflow of each balance
 @eth_router.get('/eth/netflow')
 async def ETH_netflow(balance:str,start:str,end:str):
-    choice_condition = ['binance', 'bitfinex', 'kraken', 'okx', 'gemini', 'crypto','bybit', 'bithumb', 'kucoin', 'gate', 'coinone', 'houbi','bitflyer', 'korbit', 'binance_us', 'coinbase', 'mexc', 'idex','bitmex']
+    choice_condition = ['Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
     if balance not in choice_condition:
-        return f'balance: {balance} is not found, plase choice another ["binance", "bitfinex", "kraken", "okx", "gemini", "crypto","bybit", "bithumb", "kucoin", "gate", "coinone", "houbi","bitflyer", "korbit", "binance_us", "coinbase", "mexc", "idex","bitmex"]'
+        return f'balance: {balance} is not found, plase choice another ["Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
     else:
+        ETH_psql = capitalize_column(ETH_psql,'balance')
+        ETH_psql = change_name(ETH_psql,'balance')
         top1 =ETH_psql[ETH_psql['balance'].isin([balance])]
         
         top1['last_vl'] = top1['value'].shift(1).fillna(0)
@@ -96,7 +106,7 @@ async def ETH_netflow(balance:str,start:str,end:str):
         top1 = top1[top1['time_select'].between(start,end)]
         cols =['time','balance','netflow','price','money']
         top1 = top1[cols].rename(columns={'time':'timestamp','balance':'label'})
-        top1 = capitalize_column(top1,'label')
+      
         return top1.to_dict(orient='records')
     
 #netflow all balance
@@ -114,10 +124,12 @@ async def ETH_reserve_total(start:str,end:str):
 #reserve each of balance
 @eth_router.get('/eth/reserve')
 async def ETH_reserve(balance:str,start:str,end:str):
-    choice_condition = ['binance', 'bitfinex', 'kraken', 'okx', 'gemini', 'crypto','bybit', 'bithumb', 'kucoin', 'gate', 'coinone', 'houbi','bitflyer', 'korbit', 'binance_us', 'coinbase', 'mexc', 'idex','bitmex']
+    choice_condition = ['Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
     if balance not in choice_condition:
-        return f'balance: {balance} is not found, plase choice another ["binance", "bitfinex", "kraken", "okx", "gemini", "crypto","bybit", "bithumb", "kucoin", "gate", "coinone", "houbi","bitflyer", "korbit", "binance_us", "coinbase", "mexc", "idex","bitmex"]'
+        return f'balance: {balance} is not found, plase choice another ["Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
     else:
+        ETH_psql = capitalize_column(ETH_psql,'balance')
+        ETH_psql = change_name(ETH_psql,'balance')
         top1 =ETH_psql[ETH_psql['balance'].isin([balance])]
         top1['money'] = round(top1['value']*top1['price'],2)
         top1['time_select'] = pd.to_datetime(top1['time']).dt.date
