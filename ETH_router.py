@@ -22,9 +22,13 @@ QK_df_treemap = QK_df_treemap.between_time('6:00', '10:59')
 QK_df_treemap = QK_df_treemap.reset_index()
 QK_df_treemap['time'] = pd.to_datetime(QK_df_treemap['time']).dt.date
 
+def capitalize_column(dataframe, column_name):
+    dataframe[column_name] = dataframe[column_name].str.capitalize()
+    return dataframe
 @eth_router.get('/eth/pie_eth')
 async def choice():
     df_pie = ETH_psql.loc[ETH_psql['time'] == ETH_psql['time'].max()][['time','value','balance']]
+    df_pie = capitalize_column(df_pie,'balance')
     return df_pie.to_dict(orient='records')
 
 
@@ -44,6 +48,7 @@ async def Treemap_ETH(choice_days:int):
     cols = ['balance','value','vl_change','percentage','size']
     eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','vl_change':'VL_CHANGE','percentage':'PERCENTAGE'})
     eth_tmap =eth_tmap.drop(eth_tmap[eth_tmap['PERCENTAGE']==0.00].index)
+    eth_tmap = capitalize_column(eth_tmap,'Symbols')
     return eth_tmap.to_dict(orient='records')
 
 
@@ -56,14 +61,14 @@ async def hightlight_ETH(choice_days:int,label:str):
     quakhu_df = quakhu_df.set_index('balance_qk')
     quakhu_df =quakhu_df.loc[lst_blance].reset_index()
     eth_tmap = pd.concat([hientai_df,quakhu_df],axis=1)
-    eth_tmap['vl_change'] = (eth_tmap['value'] - eth_tmap['vl_qk'])
+    eth_tmap['VALUE_SHOW'] = eth_tmap['value'].map(lambda x : numerize.numerize(x))
     eth_tmap['percentage'] = round((eth_tmap['vl_change']/eth_tmap['value']) *100,2)
-    eth_tmap['MONEY'] = round(eth_tmap['price']*eth_tmap['vl_change'])
-    cols = ['balance','value','vl_change','percentage','MONEY']
-    eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','vl_change':'VL_CHANGE','percentage':'PERCENTAGE'})
+    cols = ['balance','value','VALUE_SHOW','percentage']
+    eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','percentage':'PERCENTAGE'})
     eth_tmap =eth_tmap.drop(eth_tmap[eth_tmap['PERCENTAGE']==0.00].index)
-    cols = ['Symbols','VALUE','VL_CHANGE','PERCENTAGE','MONEY']
+    cols = ['Symbols','VALUE','VALUE_SHOW','PERCENTAGE']
     eth_tmap = eth_tmap[cols]
+    eth_tmap = capitalize_column(eth_tmap,'Symbols')
     if label=="Deposit":
         deposit = eth_tmap[eth_tmap['PERCENTAGE'] == eth_tmap['PERCENTAGE'].max()]
         return deposit.to_dict(orient="records")
@@ -91,6 +96,7 @@ async def ETH_netflow(balance:str,start:str,end:str):
         top1 = top1[top1['time_select'].between(start,end)]
         cols =['time','balance','netflow','price','money']
         top1 = top1[cols].rename(columns={'time':'timestamp','balance':'label'})
+        top1 = capitalize_column(top1,'label')
         return top1.to_dict(orient='records')
     
 #netflow all balance
@@ -119,6 +125,7 @@ async def ETH_reserve(balance:str,start:str,end:str):
         top1 = top1[top1['time_select'].between(start,end)]
         cols = ['time','balance','value','price','money']
         top1 = top1[cols].rename(columns={'time':'timestamp','balance':'label'})
+        top1 = capitalize_column(top1,'label')
         return top1.to_dict(orient='records')
     
 #reserve all balance
