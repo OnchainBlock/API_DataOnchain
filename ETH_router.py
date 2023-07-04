@@ -24,7 +24,7 @@ QK_df_treemap['time'] = pd.to_datetime(QK_df_treemap['time']).dt.date
 
 @eth_router.get('/eth/pie_eth')
 async def choice():
-    df_pie = ETH_psql.loc[ETH_psql['time'] == ETH_psql['time'].max()] 
+    df_pie = ETH_psql.loc[ETH_psql['time'] == ETH_psql['time'].max()][['time','value','balance']]
     return df_pie.to_dict(orient='records')
 
 

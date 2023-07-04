@@ -3,7 +3,7 @@
 from imports import *
 from change_router import change_router
 from Distribution_router import distribution_router
-from Holders_router import Holder_router
+from Holder_dex import Holder_router
 from Overview_router import overview_router
 from ETH_router import eth_router
 # from fastapi.openapi.utils import get_openapi

@@ -159,6 +159,7 @@ def Top_10_Tusd(df):
     cols_top10 = ['BALANCE', 'VALUE', 'PERCENTAGE','href']
     top_10addr = top_10addr[cols_top10].rename(columns={'BALANCE':'NAME'})
     top_10addr['PERCENTAGE'] = top_10addr['PERCENTAGE'].fillna("new")
+    top_10addr['href'] = top_10addr['href'].fillna('hyperlink')
     return top_10addr
 
 def Top_10_holders(df):
@@ -201,4 +202,7 @@ def Top_10_holders(df):
     cols_top10 = ['BALANCE', 'VALUE', 'PERCENTAGE','href']
     top_10addr = top_10addr[cols_top10].rename(columns={'BALANCE':'NAME'})
     top_10addr['PERCENTAGE'] = top_10addr['PERCENTAGE'].fillna("new")
+    top_10addr['href'] = top_10addr['href'].fillna('hyperlink')
     return top_10addr
+
+

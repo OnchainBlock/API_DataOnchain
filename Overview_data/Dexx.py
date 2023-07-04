@@ -159,7 +159,7 @@ def Tusd_line(TUSD):
 DAI['href'] = DAI['href'].fillna("hyperlink")
 LUSD['href'] = LUSD['href'].fillna("hyperlink")
 TUSD['href'] = TUSD['href'].fillna("hyperlink")
-
+TUSD.loc[TUSD['href']=='None','href'] = 'hyperlink'
 
 #Daipie
 DAI_pie = DAI[DAI.index == DAI.index.max()].reset_index()[['BALANCE', 'VALUE']]
@@ -174,10 +174,19 @@ DAI_pie_df = pd.concat([DAI_pie_df, another]).rename(columns={'BALANCE':'label',
 
 #LUSD
 LUSD_pie = LUSD[LUSD['TIMESTAMP'] ==
-                LUSD['TIMESTAMP'].max()][['BALANCE', 'VALUE']].rename(columns={'BALANCE':'label','VALUE':'value'})
-LUSD_pie.loc[LUSD_pie['label']=='TOTAL_ASSETS',"label"] = 'another'
+                LUSD['TIMESTAMP'].max()][['BALANCE', 'VALUE']]
+another = LUSD_pie[LUSD_pie['BALANCE'] == 'TOTAL_ASSETS']['VALUE'] - \
+    LUSD_pie[LUSD_pie['BALANCE'] != 'TOTAL_ASSETS']['VALUE'].sum()
+another = pd.DataFrame({
+    'BALANCE': 'another',
+    'VALUE': [float(another)],
+})
+LUSD_pie_df = LUSD_pie[LUSD_pie['BALANCE'] != 'TOTAL_ASSETS']
+LUSD_pie_df = pd.concat([LUSD_pie_df, another]).rename(columns={'BALANCE':'label','VALUE':'value'})
+
 #TUSD
 df_pie  = TUSD[TUSD.index == TUSD.index.max()].reset_index()[['BALANCE', 'VALUE','href']]
+df_pie.loc[df_pie['href']=="None",'href'] = 'hyperlink'
 another = df_pie[df_pie['href'] == 'hyperlink']['VALUE'].sum(
 ) - df_pie[df_pie['href'] != "hyperlink"]['VALUE'].sum()
 another = pd.DataFrame({
@@ -185,17 +194,22 @@ another = pd.DataFrame({
     'VALUE': [another],
 
 })
+
+#end
 Tusd_pie = df_pie[df_pie['href'] != "hyperlink"]
 
 Tusd_pie = pd.concat([Tusd_pie, another])[['BALANCE', 'VALUE']].rename(columns={'BALANCE':'label','VALUE':'value'})
 
 
     
-#pie all 
+# pie all 
 Dex_pie = pd.DataFrame({
     # 'Dai':DAI_pie[DAI_pie['BALANCE']=="TOTAL_ASSETS"]['VALUE'].values,
     # 'Lusd':[sum(LUSD_pie['value'])],
     # 'Tusd':[sum(df_pie['VALUE'])]
     'label':['Dai','Lusd','Tusd'],
-    'value':[DAI_pie_df['value'].sum(),sum(LUSD_pie['value']),sum(Tusd_pie['value'])]
+    'value':[DAI_pie_df['value'].sum(),sum(LUSD_pie_df['value']),sum(Tusd_pie['value'])]
 })
+
+
+

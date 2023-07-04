@@ -1,7 +1,7 @@
 from imports import *
 # from Overview_data.Cex import data
 from Overview_data.Cex import data
-from Overview_data.Dexx import DAI_pie_df, LUSD_pie, Tusd_pie, DAI, LUSD, TUSD, Dex_pie
+from Overview_data.Dexx import DAI_pie_df, LUSD_pie_df, Tusd_pie, DAI, LUSD, TUSD, Dex_pie
 from Distribution_Data.Bridge_data import TOTAL_MULTICHAIN,Celer_cBridge,HOP,STARGATE,SYNAPSE,Bridge_line
 from Distribution_Data.Bridge_data import *
 from Overview_data.Dexx import *
@@ -62,7 +62,7 @@ async def pie_date(label: str):
     if label == 'Dai':
         return DAI_pie_df.to_dict(orient='records')
     elif label == 'Lusd':
-        return LUSD_pie.to_dict(orient='records')
+        return LUSD_pie_df.to_dict(orient='records')
     elif label == 'Tusd':
         return Tusd_pie.to_dict(orient='records')
     else:
