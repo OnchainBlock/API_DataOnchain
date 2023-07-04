@@ -133,6 +133,7 @@ async def Treemap(chioce_days: int, label: str):
         BUSD = BUSD.sort_values(by = ['VALUE'], ascending=False)
         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
         BUSD['size'] = [i for i in size[:len(BUSD)]]
+        BUSD = BUSD.fillna('')
         return BUSD.to_dict(orient='records')
     elif label=='Usdc':
         cols_usdc = ['Symbols','USDC',f'{chioce_days}D_USDC']
@@ -145,6 +146,7 @@ async def Treemap(chioce_days: int, label: str):
         USDC = USDC.sort_values(by = ['VALUE'], ascending=False)
         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
         USDC['size'] = [i for i in size[:len(USDC)]]
+        
         return USDC.to_dict(orient='records')
     elif label=='Usdt':
         cols_usdt = ['Symbols','USDT',f'{chioce_days}D_USDT']
@@ -155,16 +157,18 @@ async def Treemap(chioce_days: int, label: str):
         USDT = USDT.rename(columns={'USDT':'VALUE',f'{chioce_days}D_USDT':'PERCENTAGE'})
         USDT['VL_CHANGE'] = abs(USDT['VALUE']*(USDT['PERCENTAGE']/100))
         USDT = USDT.sort_values(by = ['VALUE'], ascending=False)
-        size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
+        size = [600,180,80,40,32,26,20,16,12,10,10,6,6,6]
         USDT['size'] = [i for i in size[:len(USDT)]]
+        USDT = USDT.fillna('')
         return USDT.to_dict(orient='records')
     elif label=="Total":
         DATA_CHANGE_SUM = DATA_CHANGE_SUM.replace([np.inf, -np.inf], 0).fillna(0)
         DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(DATA_CHANGE_SUM[DATA_CHANGE_SUM['PERCENTAGE'] == 0.00].index)
         DATA_CHANGE_SUM['VL_CHANGE'] = abs(DATA_CHANGE_SUM['VALUE']*(DATA_CHANGE_SUM['PERCENTAGE']/100))
         DATA_CHANGE_SUM = DATA_CHANGE_SUM.sort_values(by = ['VALUE'],ascending=False)
-        size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
+        size = [600,180,80,40,32,26,20,16,12,10,10,6,6,6]
         DATA_CHANGE_SUM['size'] = [i for i in size[:len(DATA_CHANGE_SUM)]]
+        DATA_CHANGE_SUM = DATA_CHANGE_SUM.fillna('')
         return DATA_CHANGE_SUM.to_dict(orient='records')
 
 # async def Treemap(chioce_days: int, label: str):
