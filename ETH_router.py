@@ -53,6 +53,8 @@ async def Treemap_ETH(choice_days:int):
     cols = ['balance','value','vl_change','percentage','size']
     eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','vl_change':'VL_CHANGE','percentage':'PERCENTAGE'})
     eth_tmap =eth_tmap.drop(eth_tmap[eth_tmap['PERCENTAGE']==0.00].index)
+    eth_tmap = capitalize_column(eth_tmap,'Symbols')
+    eth_tmap = change_name(eth_tmap,'Symbols')
     return eth_tmap.to_dict(orient='records')
 
 
@@ -73,6 +75,8 @@ async def hightlight_ETH(choice_days:int,label:str):
     eth_tmap =eth_tmap.drop(eth_tmap[eth_tmap['PERCENTAGE']==0.00].index)
     cols = ['Symbols','VALUE','VALUE_SHOW','PERCENTAGE']
     eth_tmap = eth_tmap[cols]
+    eth_tmap = capitalize_column(eth_tmap,'Symbols')
+    eth_tmap = change_name(eth_tmap,'Symbols')
     if label=="Deposit":
         deposit = eth_tmap[eth_tmap['PERCENTAGE'] == eth_tmap['PERCENTAGE'].max()]
         return deposit.to_dict(orient="records")
@@ -85,9 +89,24 @@ async def hightlight_ETH(choice_days:int,label:str):
 # netflow of each balance
 @eth_router.get('/eth/netflow')
 async def ETH_netflow(balance:str,start:str,end:str):
-    choice_condition = ['Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
+    choice_condition = ['all','Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
     if balance not in choice_condition:
-        return f'balance: {balance} is not found, plase choice another ["Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
+        return f'balance: {balance} is not found, plase choice another ["all","Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
+    
+    elif balance == 'all':
+        df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
+        df_total_line['last_vl'] = df_total_line['value'].shift(1).fillna(0)
+        df_total_line = df_total_line.iloc[1:]
+        df_total_line['netflow']= round(df_total_line['value']- df_total_line['last_vl'],2)
+        df_total_line['money'] = round(df_total_line['price']*df_total_line['netflow'],2)
+        df_total_line['money'] = df_total_line['money'].map(lambda x : abs(x))
+        df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
+        df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
+        df_total_line['label']= 'all'
+        cols = ['time','label','netflow','price','money']
+        df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
+        return df_total_line.to_dict(orient='records')
+        
     else:
         top1 =ETH_psql[ETH_psql['balance'].isin([balance])]
         
@@ -103,24 +122,37 @@ async def ETH_netflow(balance:str,start:str,end:str):
       
         return top1.to_dict(orient='records')
     
-#netflow all balance
-@eth_router.get('/eth/total_netflow')
-async def ETH_reserve_total(start:str,end:str):
-    df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
-    df_total_line['money'] = round(df_total_line['price']*df_total_line['value'],2)
-    df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
-    df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
-    df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
-    cols = ['time','value','price','money']
-    df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
-    return df_total_line.to_dict(orient='records')
+# #netflow all balance
+# @eth_router.get('/eth/total_netflow')
+# async def ETH_reserve_total(start:str,end:str):
+#     df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
+#     df_total_line['money'] = round(df_total_line['price']*df_total_line['value'],2)
+#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
+#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
+#     df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
+#     cols = ['time','value','price','money']
+#     df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
+#     return df_total_line.to_dict(orient='records')
 
 #reserve each of balance
 @eth_router.get('/eth/reserve')
 async def ETH_reserve(balance:str,start:str,end:str):
-    choice_condition = ['Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
+    choice_condition = ['all','Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
     if balance not in choice_condition:
-        return f'balance: {balance} is not found, plase choice another ["Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
+        return f'balance: {balance} is not found, plase choice another ["all","Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
+    elif balance=="all":
+        df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
+        df_total_line['last_vl'] = df_total_line['value'].shift(1).fillna(0)
+        df_total_line = df_total_line.iloc[1:]
+        df_total_line['netflow']= round(df_total_line['value']- df_total_line['last_vl'],2)
+        df_total_line['money'] = round(df_total_line['price']*df_total_line['netflow'],2)
+        df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
+        df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
+        df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
+        df_total_line['label'] = 'total reserve'
+        cols = ['time','label','netflow','price','money']
+        df_total_line = df_total_line[cols].rename(columns={'time':'timestamp','netflow':'value'})
+        return df_total_line.to_dict(orient='records')
     else:
         top1 =ETH_psql[ETH_psql['balance'].isin([balance])]
         top1['money'] = round(top1['value']*top1['price'],2)
@@ -132,18 +164,18 @@ async def ETH_reserve(balance:str,start:str,end:str):
         top1 = capitalize_column(top1,'label')
         return top1.to_dict(orient='records')
     
-#reserve all balance
-@eth_router.get('/eth/reserve_total')
-async def ETH_netflow_total(start:str,end:str):
-    df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
-    df_total_line['last_vl'] = df_total_line['value'].shift(1).fillna(0)
-    df_total_line = df_total_line.iloc[1:]
-    df_total_line['netflow']= round(df_total_line['value']- df_total_line['last_vl'],2)
-    df_total_line['money'] = round(df_total_line['price']*df_total_line['netflow'],2)
-    df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
-    df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
-    df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
-    cols = ['time','netflow','price','money']
-    df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
-    return df_total_line.to_dict(orient='records')
+# #reserve all balance
+# @eth_router.get('/eth/reserve_total')
+# async def ETH_netflow_total(start:str,end:str):
+#     df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
+#     df_total_line['last_vl'] = df_total_line['value'].shift(1).fillna(0)
+#     df_total_line = df_total_line.iloc[1:]
+#     df_total_line['netflow']= round(df_total_line['value']- df_total_line['last_vl'],2)
+#     df_total_line['money'] = round(df_total_line['price']*df_total_line['netflow'],2)
+#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
+#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
+#     df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
+#     cols = ['time','netflow','price','money']
+#     df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
+#     return df_total_line.to_dict(orient='records')
 
