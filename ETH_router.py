@@ -142,16 +142,13 @@ async def ETH_reserve(balance:str,start:str,end:str):
         return f'balance: {balance} is not found, plase choice another ["all","Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
     elif balance=="all":
         df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
-        df_total_line['last_vl'] = df_total_line['value'].shift(1).fillna(0)
-        df_total_line = df_total_line.iloc[1:]
-        df_total_line['netflow']= round(df_total_line['value']- df_total_line['last_vl'],2)
-        df_total_line['money'] = round(df_total_line['price']*df_total_line['netflow'],2)
+        df_total_line['money'] = round(df_total_line['price']*df_total_line['value'],2)
         df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
         df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
         df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
         df_total_line['label'] = 'total reserve'
-        cols = ['time','label','netflow','price','money']
-        df_total_line = df_total_line[cols].rename(columns={'time':'timestamp','netflow':'value'})
+        cols = ['time','label','value','price','money']
+        df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
         return df_total_line.to_dict(orient='records')
     else:
         top1 =ETH_psql[ETH_psql['balance'].isin([balance])]
