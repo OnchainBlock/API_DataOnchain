@@ -497,7 +497,7 @@ query_synapse = os.getenv('query_synapse_bridge')
 SYNAPSE = pd.read_sql(query_synapse,my_server)
 SYNAPSE['TIMESTAMP']=SYNAPSE['TIMESTAMP'].apply(lambda x : pd.to_datetime(x).floor('T'))
 SYNAPSE['TIMESTAMP'] = pd.to_datetime(SYNAPSE['TIMESTAMP'])
-print(SYNAPSE['EXPLORER'].unique())
+# print(SYNAPSE['EXPLORER'].unique())
 
 def create_df_deposit_synapse(SYNAPSE):
     SYNAPSE_ETH = SYNAPSE[SYNAPSE['EXPLORER']=='Ethereum']

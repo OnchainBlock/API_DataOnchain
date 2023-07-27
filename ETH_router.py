@@ -12,6 +12,9 @@ my_server = os.environ['my_server']
 query_ETH = os.environ['query_ETH']
 
 ETH_psql = pd.read_sql(query_ETH,my_server)
+
+ETH_psql['time'] = ETH_psql['time'].apply(
+    lambda x: pd.to_datetime(x).floor('T'))
 df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
 
 df_treemap = ETH_psql.copy()

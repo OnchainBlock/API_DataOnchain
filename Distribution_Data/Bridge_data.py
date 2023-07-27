@@ -237,7 +237,7 @@ def create_celer(data):
     # TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER.sort_values(by=['VALUE'])
     return TOTAL_ASSETS_CELER
 
-print(Celer_cBridge['EXPLORER'].unique())
+
 # Hop bridge
 query_hop_bridge = os.environ['query_hop_bridge']
 HOP = pd.read_sql(query_hop_bridge,my_server)

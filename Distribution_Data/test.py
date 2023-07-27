@@ -115,7 +115,6 @@ def Treemap(chioce_days: int, label: str):
         size = [250,100,50,30,20,20,20,20,20,20,20,20,15,15,10,5]
         DATA_CHANGE_SUM['size'] = [i for i in size[:len(DATA_CHANGE_SUM)]]
         return DATA_CHANGE_SUM.to_dict(orient='records')
-print(Treemap(1,'Busd'))
 
 
     # if label =='Usdt':
