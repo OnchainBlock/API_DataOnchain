@@ -21,47 +21,46 @@ class Funtions():
     
     def __init__(self) -> None:
         pass
-    def create_table(eth_bridge,bridge:str) -> None:
-        '''
-            CREATE TABLE
-            - Tạo và tính toán ra các dạng dữ liệu dạng bảng
-        '''
-        eth_bridge = eth_bridge[eth_bridge['bridge']==bridge]
+    
+    def create_table(eth_bridge)->None:
         data_ht = eth_bridge[eth_bridge['time']==eth_bridge['time'].max()].reset_index()
         create_qk = eth_bridge.set_index('time')
         create_qk= create_qk.between_time('6:00','8:00').reset_index()
         create_qk['time']= pd.to_datetime(create_qk['time']).dt.date
         data_qk_24 = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(1)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
         data = pd.concat([data_ht,data_qk_24],axis=1).drop(columns={'index'})
-        data['change_1D'] = round(data['value'] - data['qk_vl'],2)
+        data['cvl_1D'] = round(data['value'] - data['qk_vl'],2)
         data['pr_1D'] = round((data['value'] -data['qk_vl'])/data['value']*100,2)
         data_qk7d = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(7)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
         if data_qk7d['qk_vl'].empty :
-            data7D = pd.DataFrame({
-                'change_7D':['comming soon'],
-                'pr_7D':['comming soon']
-            })
+                    data7D = pd.DataFrame({
+                        'cvl_7D':['comming soon'],
+                        'pr_7D':['comming soon']
+                    })
         else:
             data7D = pd.concat([data_ht,data_qk7d],axis=1).drop(columns={'index'})
-            data7D['change_7D'] = round(data7D['value'] - data7D['qk_vl'],2)
+            data7D['cvl_7D'] = round(data7D['value'] - data7D['qk_vl'],2)
             data7D['pr_7D'] = round((data7D['value'] -data7D['qk_vl'])/data7D['value']*100,2)
+            cols_7d = ['cvl_7D','pr_7D']
+            data7D = data7D[cols_7d]
 
         data_qk30d = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(30)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
         if data_qk30d['qk_vl'].empty :
             data30D = pd.DataFrame({
-                'change_30D':['comming soon'],
+                'cvl_30D':['comming soon'],
                 'pr_30D':['comming soon']
             })
         else:
             data30D = pd.concat([data_ht,data_qk30d],axis=1).drop(columns={'index'})
-            data30D['change_30D'] = round(data30D['value'] - data30D['qk_vl'],2)
+            data30D['cvl_30D'] = round(data30D['value'] - data30D['qk_vl'],2)
             data30D['pr_30D'] = round((data30D['value'] -data30D['qk_vl'])/data30D['value']*100,2)
 
         df_table = pd.concat([data,data7D,data30D],axis=1).drop(columns={'time'}).rename(columns={'value':'balance'})
-        cols = ['bridge','balance','change_1D','pr_1D','change_7D','pr_7D','change_30D','pr_30D']
-        df_table = df_table[cols]
+        cols_main = ['bridge','balance','cvl_1D', 'pr_1D','cvl_7D', 'pr_7D','cvl_30D', 'pr_30D']
+        df_table = df_table[cols_main]
+        df_table = df_table.fillna('comming soon')
         df_table['balance']= round(df_table['balance'],2)
-        return df_table.to_dict(orient='records')
+        return df_table.to_dict(orient="records")
     def func_netflow(data,bridge:str,start:str,end:str) -> None:
         data = data[data['bridge']==bridge]
         data['qk_value'] = data['value'].shift(1).fillna(0)
@@ -140,31 +139,42 @@ async def func_netflow(bridge:str,start:str,end:str) -> None:
 
 # API table
 @eth_bridge_router.get('/table')
-async def create_table(bridge:str):
-    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base']
-    if bridge not in choice_condition:
-            return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base"]'
-    elif bridge=="Arbitrum":
-          data = Funtions.create_table(eth_bridge,bridge)
-          return data
-    elif bridge=="Optimism":
-          data = Funtions.create_table(eth_bridge,bridge)
-          return data
-    elif bridge=="zkSync Era":
-          data = Funtions.create_table(eth_bridge,bridge)
-          return data
-    elif bridge=="StarkNet":
-          data = Funtions.create_table(eth_bridge,bridge)
-          return data
-    elif bridge=="Polygon":
-          data = Funtions.create_table(eth_bridge,bridge)
-          return data
-    elif bridge=="Linea":
-          data = Funtions.create_table(eth_bridge,bridge)
-          return data
-    elif bridge=="Base":
-          data = Funtions.create_table(eth_bridge,bridge)
-          return data
-    
+async def create_table()->None:
+        data_ht = eth_bridge[eth_bridge['time']==eth_bridge['time'].max()].reset_index()
+        create_qk = eth_bridge.set_index('time')
+        create_qk= create_qk.between_time('6:00','8:00').reset_index()
+        create_qk['time']= pd.to_datetime(create_qk['time']).dt.date
+        data_qk_24 = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(1)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
+        data = pd.concat([data_ht,data_qk_24],axis=1).drop(columns={'index'})
+        data['cvl_1D'] = round(data['value'] - data['qk_vl'],2)
+        data['pr_1D'] = round((data['value'] -data['qk_vl'])/data['value']*100,2)
+        data_qk7d = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(7)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
+        if data_qk7d['qk_vl'].empty :
+                    data7D = pd.DataFrame({
+                        'cvl_7D':['comming soon'],
+                        'pr_7D':['comming soon']
+                    })
+        else:
+            data7D = pd.concat([data_ht,data_qk7d],axis=1).drop(columns={'index'})
+            data7D['cvl_7D'] = round(data7D['value'] - data7D['qk_vl'],2)
+            data7D['pr_7D'] = round((data7D['value'] -data7D['qk_vl'])/data7D['value']*100,2)
+            cols_7d = ['cvl_7D','pr_7D']
+            data7D = data7D[cols_7d]
 
+        data_qk30d = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(30)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
+        if data_qk30d['qk_vl'].empty :
+            data30D = pd.DataFrame({
+                'cvl_30D':['comming soon'],
+                'pr_30D':['comming soon']
+            })
+        else:
+            data30D = pd.concat([data_ht,data_qk30d],axis=1).drop(columns={'index'})
+            data30D['cvl_30D'] = round(data30D['value'] - data30D['qk_vl'],2)
+            data30D['pr_30D'] = round((data30D['value'] -data30D['qk_vl'])/data30D['value']*100,2)
 
+        df_table = pd.concat([data,data7D,data30D],axis=1).drop(columns={'time'}).rename(columns={'value':'balance'})
+        cols_main = ['bridge','balance','cvl_1D', 'pr_1D','cvl_7D', 'pr_7D','cvl_30D', 'pr_30D']
+        df_table = df_table[cols_main]
+        df_table = df_table.fillna('comming soon')
+        df_table['balance']= round(df_table['balance'],2)
+        return df_table.to_dict(orient="records")
