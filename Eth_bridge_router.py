@@ -61,15 +61,33 @@ class Funtions():
         df_table = df_table.fillna('comming soon')
         df_table['balance']= round(df_table['balance'],2)
         return df_table.to_dict(orient="records")
-    def func_netflow(data,start:str,end:str) -> None:
+    def func_netflow(data,bridge:str) -> None:
+        data = data[data['bridge']==bridge]
         data['qk_value'] = data['value'].shift(1).fillna(0)
         data = data.iloc[2:]
+        
         data['change'] = round(data['value'] - data['qk_value'],2)
-        data['time_select'] = pd.to_datetime(data['time']).dt.date
+        
+        data = data.rename(columns ={'time':'timestamp','bridge':'label'})
+        return data
+    def create_netflow_df(eth_bridge,start:str,end:str):
+        Arbitrum = Funtions.func_netflow(eth_bridge,'Arbitrum')
+        Optimism = Funtions.func_netflow(eth_bridge,'Optimism')
+        zkSync_Era = Funtions.func_netflow(eth_bridge,'zkSync Era')
+        StarkNet = Funtions.func_netflow(eth_bridge,'StarkNet')
+        Polygon = Funtions.func_netflow(eth_bridge,'Polygon')
+        Linea = Funtions.func_netflow(eth_bridge,'Linea')
+        Base = Funtions.func_netflow(eth_bridge,'Base')
+
+        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base]
+        data = pd.concat(data,axis=0)
+        data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
         data = data[data['time_select'].between(start,end)]
-        cols =['time','bridge','change']
-        data = data[cols].rename(columns ={'time':'timestamp','bridge':'label','change':'value'})
+        cols = ['timestamp','label','change']
+        data = data[cols].rename(columns={'change':'value'}).groupby(['timestamp','label','value']).count().reset_index()
+        
+        # data = data[cols]
         return data.to_dict(orient='records')
     def create_bridge(eth_bridge,bridge:str,start:str,end:str)-> None:
         data = eth_bridge[eth_bridge['bridge']==bridge]
@@ -109,7 +127,7 @@ async def bridge_ETH(bridge:str,start:str,end:str):
 # NEtflow api in here
 @eth_bridge_router.get('/Netflow')
 async def func_netflow(start:str,end:str) -> None:
-        return Funtions.func_netflow(eth_bridge,start,end)
+        return Funtions.create_netflow_df(eth_bridge,start,end)
         
 
 # API table
