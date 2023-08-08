@@ -65,12 +65,11 @@ class Funtions():
         data['qk_value'] = data['value'].shift(1).fillna(0)
         data = data.iloc[2:]
         data['change'] = round(data['value'] - data['qk_value'],2)
-        data['money'] = round(data['change']* data['price'],2)
         data['time_select'] = pd.to_datetime(data['time']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
         data = data[data['time_select'].between(start,end)]
-        cols =['time','bridge','change','money','price']
-        data = data[cols].rename(columns ={'time':'timestamp','bridge':'label'})
+        cols =['time','bridge','change']
+        data = data[cols].rename(columns ={'time':'timestamp','bridge':'label','change':'value'})
         return data.to_dict(orient='records')
     def create_bridge(eth_bridge,bridge:str,start:str,end:str)-> None:
         data = eth_bridge[eth_bridge['bridge']==bridge]
