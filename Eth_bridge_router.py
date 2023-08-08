@@ -61,8 +61,7 @@ class Funtions():
         df_table = df_table.fillna('comming soon')
         df_table['balance']= round(df_table['balance'],2)
         return df_table.to_dict(orient="records")
-    def func_netflow(data,bridge:str,start:str,end:str) -> None:
-        data = data[data['bridge']==bridge]
+    def func_netflow(data,start:str,end:str) -> None:
         data['qk_value'] = data['value'].shift(1).fillna(0)
         data = data.iloc[2:]
         data['change'] = round(data['value'] - data['qk_value'],2)
@@ -110,32 +109,9 @@ async def bridge_ETH(bridge:str,start:str,end:str):
 
 # NEtflow api in here
 @eth_bridge_router.get('/Netflow')
-async def func_netflow(bridge:str,start:str,end:str) -> None:
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base']
-        if bridge not in choice_condition:
-                return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base"]'
-        elif bridge=="Arbitrum":
-                data =Funtions.func_netflow(eth_bridge,bridge,start,end)
-                return data
-        elif bridge=="Optimism":
-                data =Funtions.func_netflow(eth_bridge,bridge,start,end)
-                return data
-        elif bridge=="zkSync Era":
-                data =Funtions.func_netflow(eth_bridge,bridge,start,end)
-                return data
-        elif bridge=="StarkNet":
-                data =Funtions.func_netflow(eth_bridge,bridge,start,end)
-                return data
+async def func_netflow(start:str,end:str) -> None:
+        return Funtions.func_netflow(eth_bridge,start,end)
         
-        elif bridge=="Polygon":
-                data =Funtions.func_netflow(eth_bridge,bridge,start,end)
-                return data
-        elif bridge=="Linea":
-                data =Funtions.func_netflow(eth_bridge,bridge,start,end)
-                return data
-        elif bridge=="Base":
-                data =Funtions.func_netflow(eth_bridge,bridge,start,end)
-                return data
 
 # API table
 @eth_bridge_router.get('/table')
