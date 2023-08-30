@@ -164,18 +164,70 @@ async def ETH_reserve(balance:str,start:str,end:str):
         top1 = capitalize_column(top1,'label')
         return top1.to_dict(orient='records')
     
-# #reserve all balance
-# @eth_router.get('/eth/reserve_total')
-# async def ETH_netflow_total(start:str,end:str):
-#     df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
-#     df_total_line['last_vl'] = df_total_line['value'].shift(1).fillna(0)
-#     df_total_line = df_total_line.iloc[1:]
-#     df_total_line['netflow']= round(df_total_line['value']- df_total_line['last_vl'],2)
-#     df_total_line['money'] = round(df_total_line['price']*df_total_line['netflow'],2)
-#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
-#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
-#     df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
-#     cols = ['time','netflow','price','money']
-#     df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
-#     return df_total_line.to_dict(orient='records')
+# Inflow In Ethereum
+def create_netflow(balance:str):
+    test = ETH_psql[ETH_psql['balance']==balance]
+    test = test.sort_values(by=['time'],ascending=True)
+    test['last_vl'] = test['value'].shift(1).fillna(0)
+    test = test.iloc[1:]
+    test['netflow']=round(test['value']-test['last_vl'],2)
+    test['money'] = abs(test['price']* test['netflow'])
+    cols = ['time','balance','netflow','money']
+    test = test[cols]
+    return test
 
+def create_df_netflow():
+    Binance = create_netflow('Binance')
+    Gemini = create_netflow('Gemini')
+    Idex = create_netflow('Idex')
+    Kucoin = create_netflow('Kucoin')
+    OKX = create_netflow('OKX')
+    Bitmex = create_netflow('Bitmex')
+    Kraken = create_netflow('Kraken')
+    Bitflyer = create_netflow('Bitflyer')
+    Coinone = create_netflow('Coinone')
+    Korbit = create_netflow('Korbit')
+    MEXC = create_netflow('MEXC')
+    Bitfinex = create_netflow('Bitfinex')
+    Gate = create_netflow('Gate')
+    Binance_US = create_netflow('Binance US')
+    Bybit = create_netflow('Bybit')
+    Bithumb = create_netflow('Bithumb')
+    Crypto_com = create_netflow('Crypto.com')
+    Coinbase = create_netflow('Coinbase')
+    Houbi = create_netflow('Houbi')
+    data= pd.concat([Binance,Gemini,Idex,Kucoin,OKX,Bitmex,Kraken,Bitflyer,Coinone,Korbit,MEXC,Bitfinex,Gate,Binance_US,Bybit,Bithumb,Crypto_com,Coinbase,Houbi],axis=0)
+    data = data.sort_values(by=['time'],ascending=True)
+    return data
+
+@eth_router.get('/eth/Inflow_exchange')
+async def Inflow_exchange(start:str,end:str):
+    data = create_df_netflow()
+    data = data[data['netflow']>0]
+    data['time_select'] = pd.to_datetime(data['time']).dt.date
+    data['time_select'] = pd.to_datetime(data['time_select'])
+    data = data[data['time_select'].between(start,end)]
+    cols = ['time','balance','netflow','money']
+    data =data[cols]
+    return data.to_dict(orient='records')
+
+@eth_router.get('/eth/Outflow_exchange')
+async def Outflow_exchange(start:str,end:str):
+    data = create_df_netflow()
+    data = data[data['netflow']<0]
+    data['time_select'] = pd.to_datetime(data['time']).dt.date
+    data['time_select'] = pd.to_datetime(data['time_select'])
+    data = data[data['time_select'].between(start,end)]
+    cols = ['time','balance','netflow','money']
+    data =data[cols]
+    return data.to_dict(orient='records')
+
+@eth_router.get('/eth/NetFlow_exchange')
+async def Netflow_exchange(start:str,end:str):
+    data = create_df_netflow()
+    data['time_select'] = pd.to_datetime(data['time']).dt.date
+    data['time_select'] = pd.to_datetime(data['time_select'])
+    data = data[data['time_select'].between(start,end)]
+    cols = ['time','balance','netflow','money']
+    data =data[cols]
+    return data.to_dict(orient='records')
