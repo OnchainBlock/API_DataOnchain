@@ -172,7 +172,7 @@ async def create_table()->None:
         df_table['balance']= round(df_table['balance'],2)
         return df_table.to_dict(orient="records")
     
-    
+#create Inflow / OutFlow Ethereum in layers2
 def func_netflow(data,bridge:str) -> None:
         data = data[data['bridge']==bridge]
         data['qk_value'] = data['value'].shift(1).fillna(0)
@@ -181,11 +181,11 @@ def func_netflow(data,bridge:str) -> None:
         data['change'] = round(data['value'] - data['qk_value'],2)
         data['money'] = round(data['change']* data['price'],2)
         cols =['time','bridge','change','money']
-        data = data[cols].rename(columns ={'time':'timestamp','bridge':'label'})
+        data = data[cols].rename(columns ={'time':'timestamp','bridge':'label','change':'value'})
         return data
 
 @eth_bridge_router.get('/Inflow_layer2')
-def Inflow_layer2(eth_bridge):
+async def Inflow_layer2(start:str,end:str):
         Arbitrum = func_netflow(eth_bridge,'Arbitrum')
         Optimism = func_netflow(eth_bridge,'Optimism')
         zkSync_Era = func_netflow(eth_bridge,'zkSync Era')
@@ -195,12 +195,17 @@ def Inflow_layer2(eth_bridge):
         Base = func_netflow(eth_bridge,'Base')
         data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base]
         data = pd.concat(data,axis=0)
-        data = data[data['change']>0]
+        data = data[data['value']>0]
         data = data.sort_values(by=['timestamp'],ascending=True)
+        data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
+        data['time_select'] = pd.to_datetime(data['time_select'])
+        data = data[data['time_select'].between(start,end)]
+        cols = ['timestamp','label','value','money']
+        data = data[cols]
         return data.to_dict(orient="records")
     
 @eth_bridge_router.get('/Outflow_layer2')
-def Outflow_layer2(eth_bridge):
+async def Outflow_layer2(start:str,end:str):
         Arbitrum = func_netflow(eth_bridge,'Arbitrum')
         Optimism = func_netflow(eth_bridge,'Optimism')
         zkSync_Era = func_netflow(eth_bridge,'zkSync Era')
@@ -210,6 +215,11 @@ def Outflow_layer2(eth_bridge):
         Base = func_netflow(eth_bridge,'Base')
         data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base]
         data = pd.concat(data,axis=0)
-        data = data[data['change']<0]
+        data = data[data['value']<0]
         data = data.sort_values(by=['timestamp'],ascending=True)
+        data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
+        data['time_select'] = pd.to_datetime(data['time_select'])
+        data = data[data['time_select'].between(start,end)]
+        cols = ['timestamp','label','value','money']
+        data = data[cols]
         return data.to_dict(orient="records")
