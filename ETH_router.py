@@ -201,8 +201,9 @@ def create_df_netflow():
     return data
 
 @eth_router.get('/eth/Inflow_exchange')
-async def Inflow_exchange(start:str,end:str):
+async def Inflow_exchange(start:str,end:str,label:str):
     data = create_df_netflow()
+    data = data[data['balance']==label]
     data = data[data['netflow']>0]
     data['time_select'] = pd.to_datetime(data['time']).dt.date
     data['time_select'] = pd.to_datetime(data['time_select'])
@@ -212,8 +213,9 @@ async def Inflow_exchange(start:str,end:str):
     return data.to_dict(orient='records')
 
 @eth_router.get('/eth/Outflow_exchange')
-async def Outflow_exchange(start:str,end:str):
+async def Outflow_exchange(start:str,end:str,label:str):
     data = create_df_netflow()
+    data = data[data['balance']==label]
     data = data[data['netflow']<0]
     data['time_select'] = pd.to_datetime(data['time']).dt.date
     data['time_select'] = pd.to_datetime(data['time_select'])
