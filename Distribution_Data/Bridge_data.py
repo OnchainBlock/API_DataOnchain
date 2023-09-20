@@ -368,3 +368,124 @@ synapse_pie = synapse_pie.sort_values(by=['VALUE'],ascending=False)
 
 #test_show all in line chart Bridge
 
+
+
+# table in header ovewrview
+multichain_table = create_multichain(TOTAL_MULTICHAIN)
+multichain_table = multichain_table.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()
+
+celer_table = create_celer(Celer_cBridge)
+celer_table = celer_table.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()
+hop_table = create_hop(HOP)
+hop_table = hop_table.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()
+stargate_table = create_starage(STARGATE)
+stargate_table = stargate_table.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()
+synapse_table = create_synapse(SYNAPSE)
+synapse_table = synapse_table.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()
+
+def create_table_bridge_st(data):
+    hientai = data[data['TIMESTAMP']== data['TIMESTAMP'].max()]
+    hientai = hientai.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()['VALUE']
+    qk_data = multichain_table.set_index('TIMESTAMP')
+    qk_data = qk_data.between_time('6:00', '10:59')
+    qk_data = qk_data.reset_index()
+    qk_data['TIMESTAMP'] = pd.to_datetime(qk_data['TIMESTAMP']).dt.date
+
+    lastday = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=1)]['VALUE']
+    lastweek = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=7)]['VALUE']
+    lastmonth = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=30)]['VALUE']
+    df_table = pd.DataFrame({
+        '24h_changeVL':[float(hientai)-float(lastday)],
+        '24h_per':[((float(hientai)-float(lastday))/float(hientai))*100],
+        '7D_changeVL':[float(hientai)-float(lastweek)],
+        '7D_per':[((float(hientai)-float(lastweek))/float(hientai))*100],
+        '30D_changeVL':[float(hientai)-float(lastmonth)],
+        '30D_per':[((float(hientai)-float(lastmonth))/float(hientai))*100],
+    })
+    return df_table.to_dict(orient='records')
+
+
+# Header thay đổi tuừng phàn tử trong Bridge
+
+multichain_satis = Bridge_line.groupby(['TIMESTAMP','LABEL']).agg({'VALUE':'sum'}).reset_index()
+celer_satis = Celer_cBridge.groupby(['TIMESTAMP','LABEL']).agg({'VALUE':'sum'}).reset_index()
+hop_statis = HOP.groupby(['TIMESTAMP','LABEL']).agg({'VALUE':'sum'}).reset_index()
+stargate_static = STARGATE.groupby(['TIMESTAMP','LABEL']).agg({'VALUE':'sum'}).reset_index()
+synapse_static =SYNAPSE.groupby(['TIMESTAMP','LABEL']).agg({'VALUE':'sum'}).reset_index()
+
+def choice_df_statics(bridge:str,token:str):
+    choice_token = ['USDT','USDC','BUSD']
+    choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
+    if bridge not in choice_condition and token not in choice_token:
+        return f'label: {bridge} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]\n token: {token} is not found choice ["USDT","USDC","BUSD"]'
+    elif bridge=='Multichain' and token=='USDT':
+        data = multichain_satis[multichain_satis['LABEL']=='USDT']
+        return data
+    elif bridge=='Multichain' and token=='USDC':
+        data = multichain_satis[multichain_satis['LABEL']=='USDC']
+        return data
+    elif bridge=='Multichain' and token=='BUSD':
+        data = multichain_satis[multichain_satis['LABEL']=='BUSD']
+        return data
+    # celer
+    elif bridge=='Celer' and token=='USDT':
+        data = celer_satis[celer_satis['LABEL']=='USDT']
+        return data
+    elif bridge=='Celer' and token=='USDC':
+        data = celer_satis[celer_satis['LABEL']=='USDC']
+        return data
+    elif bridge=='Celer' and token=='BUSD':
+        data = celer_satis[celer_satis['LABEL']=='BUSD']
+        return data
+    #hop
+    elif bridge=='Hop' and token=='USDT':
+        data = hop_statis[hop_statis['LABEL']=='USDT']
+        return data
+    elif bridge=='Hop' and token=='USDC':
+        data = hop_statis[hop_statis['LABEL']=='USDC']
+        return data
+    elif bridge=='Hop' and token=='BUSD':
+        data = hop_statis[hop_statis['LABEL']=='BUSD']
+        return data
+    #stargate
+    elif bridge=='Stargate' and token=='USDT':
+        data = stargate_static[stargate_static['LABEL']=='USDT']
+        return data
+    elif bridge=='Stargate' and token=='USDC':
+        data = stargate_static[stargate_static['LABEL']=='USDC']
+        return data
+    elif bridge=='Stargate' and token=='BUSD':
+        data = stargate_static[stargate_static['LABEL']=='BUSD']
+        return data
+    #synapse
+    elif bridge=='Synapse' and token=='USDT':
+        data = synapse_static[synapse_static['LABEL']=='USDT']
+        return data
+    elif bridge=='Synapse' and token=='USDC':
+        data = synapse_static[synapse_static['LABEL']=='USDC']
+        return data
+    elif bridge=='Synapse' and token=='BUSD':
+        data = synapse_static[synapse_static['LABEL']=='BUSD']
+        return data
+def create_table_statis_eachofbridge(data):
+    hientai = data[data['TIMESTAMP']== data['TIMESTAMP'].max()]['VALUE']
+    qk_data = data.set_index('TIMESTAMP')
+    qk_data = qk_data.between_time('6:00', '10:59')
+    qk_data = qk_data.reset_index()
+    qk_data['TIMESTAMP'] = pd.to_datetime(qk_data['TIMESTAMP']).dt.date
+    lastday = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=1)]['VALUE']
+    lastweek = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=7)]['VALUE']
+    lastmonth = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=30)]['VALUE']
+    df_table = pd.DataFrame({
+        '24h_changeVL':[float(hientai)-float(lastday)],
+        '24h_per':[((float(hientai)-float(lastday))/float(hientai))*100],
+        '7D_changeVL':[float(hientai)-float(lastweek)],
+        '7D_per':[((float(hientai)-float(lastweek))/float(hientai))*100],
+        '30D_changeVL':[float(hientai)-float(lastmonth)],
+        '30D_per':[((float(hientai)-float(lastmonth))/float(hientai))*100],
+    })
+    return df_table.to_dict(orient='records')
+
+
+
+    

@@ -5,6 +5,7 @@ from Overview_data.Dexx import DAI_pie_df, LUSD_pie_df, Tusd_pie, DAI, LUSD, TUS
 from Distribution_Data.Bridge_data import TOTAL_MULTICHAIN,Celer_cBridge,HOP,STARGATE,SYNAPSE,Bridge_line
 from Distribution_Data.Bridge_data import *
 from Overview_data.Dexx import *
+from UpgradeV1_data.dexc_data import *
 
 import pandas as pd
 overview_router = APIRouter(
@@ -98,34 +99,6 @@ async def choice_time(start: str, end: str, label: str):
 
     else:
         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
-# async def choice_time(start: str, end: str, label: str):
-#     if label == 'Lusd':
-#         LUSD_line = lusd_line(LUSD)
-#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIMESTAMP']).dt.date
-#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIME'])
-#         LUSD_line = LUSD_line[LUSD_line['TIME'].between(start,end)].drop(columns=['TIME'])
-#         LUSD_line = LUSD_line.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
-#         return LUSD_line.to_dict(orient='records')
-#     elif label == 'Dai':
-#         dai_df = Dai_line(DAI)
-#         dai_df['TIME'] = pd.to_datetime(dai_df['TIMESTAMP']).dt.date
-#         dai_df['TIME'] = pd.to_datetime(dai_df['TIME'])
-#         dai_df = dai_df[dai_df['TIME'].between(start,end)].drop(columns=['TIME'])
-#         dai_df = dai_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
-#         return dai_df.to_dict(orient='records')
-#     elif label == 'Tusd':
-#         tusd_df = Tusd_line(TUSD)
-#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIMESTAMP']).dt.date
-#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIME'])
-#         tusd_df = tusd_df[tusd_df['TIME'].between(start,end)].drop(columns=['TIME'])
-#         tusd_df = tusd_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
-#         return tusd_df.to_dict(orient='records')
-
-#     else:
-#         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
-
-
-# Bridge Overviews
 @overview_router.get('/Bridge/pie')
 async def create_bridge_pie():
     multichain = Bridge_line[Bridge_line['TIMESTAMP']==Bridge_line['TIMESTAMP'].max()]
@@ -190,3 +163,74 @@ async def choice_bridge(start:str, end:str,label:str):
 @overview_router.get('/updatetime')
 async def uptime():
     return dict({'time':data['timestamp'].max()})
+
+@overview_router.get('/dexc_statisc')
+async def statistic_dexc(token:str):
+    choice_condition = ['Dai','Lusd','Tusd']
+    if token not in choice_condition:
+        return f'balance: {token} is not found, plase choice another ["Dai","Lusd","Tusd"]'
+    elif token=="Dai":
+        return create_table(DAI)
+    elif token=='Lusd':
+        return create_table(LUSD)
+    elif token=='Tusd':
+        return create_table_tusd(TUSD)
+
+# Statictis Bridge Stablecoin
+@overview_router.get('/bridge_statistics')
+async def statistic_bridge_st(bridge:str):
+    choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
+    if bridge not in choice_condition:
+        return f'bridge: {bridge} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]'
+    elif bridge =="Multichain":
+        return create_table_bridge_st(multichain_table)
+    elif bridge=='Celer':
+        return create_table_bridge_st(celer_table)
+    elif bridge=='Hop':
+        return create_table_bridge_st(hop_table)
+    elif bridge=='Stargate':
+        return create_table_bridge_st(stargate_table)
+    elif bridge=='Synapse':
+        return create_table_bridge_st(synapse_table)
+    
+@overview_router.get('/eachofbridge_statisc')
+async def balanceofstatisc_eachofbridge(bridge:str,token:str):
+    choice_token = ['USDT','USDC','BUSD']
+    choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
+    if bridge not in choice_condition or token not in choice_token:
+        return f'label: {bridge} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]\n token: {token} is not found choice ["USDT","USDC","BUSD"]'
+    # multichain
+    elif bridge=='Multichain' and token=='USDT':
+        return create_table_statis_eachofbridge(choice_df_statics('Multichain','USDT'))
+    elif bridge=='Multichain' and token=='USDC':
+        return create_table_statis_eachofbridge(choice_df_statics('Multichain','USDC'))
+    elif bridge=='Multichain' and token=='BUSD':
+        return create_table_statis_eachofbridge(choice_df_statics('Multichain','BUSD'))
+    # Celer
+    elif bridge=='Celer' and token=='USDT':
+        return create_table_statis_eachofbridge(choice_df_statics('Celer','USDT'))
+    elif bridge=='Celer' and token=='USDC':
+        return create_table_statis_eachofbridge(choice_df_statics('Celer','USDC'))
+    elif bridge=='Celer' and token=='BUSD':
+        return create_table_statis_eachofbridge(choice_df_statics('Celer','BUSD'))
+    #Hop
+    elif bridge=='Hop' and token=='USDT':
+        return create_table_statis_eachofbridge(choice_df_statics('Hop','USDT'))
+    elif bridge=='Hop' and token=='USDC':
+        return create_table_statis_eachofbridge(choice_df_statics('Hop','USDC'))
+    elif bridge=='Hop' and token=='BUSD':
+        return create_table_statis_eachofbridge(choice_df_statics('Hop','BUSD'))
+    #Stargate
+    elif bridge=='Stargate' and token=='USDT':
+        return create_table_statis_eachofbridge(choice_df_statics('Stargate','USDT'))
+    elif bridge=='Stargate' and token=='USDC':
+        return create_table_statis_eachofbridge(choice_df_statics('Stargate','USDC'))
+    elif bridge=='Stargate' and token=='BUSD':
+        return create_table_statis_eachofbridge(choice_df_statics('Stargate','BUSD'))
+    #Synapse
+    elif bridge=='Synapse' and token=='USDT':
+        return create_table_statis_eachofbridge(choice_df_statics('Synapse','USDT'))
+    elif bridge=='Synapse' and token=='USDC':
+        return create_table_statis_eachofbridge(choice_df_statics('Synapse','USDC'))
+    elif bridge=='Synapse' and token=='BUSD':
+        return create_table_statis_eachofbridge(choice_df_statics('Synapse','BUSD'))
