@@ -107,9 +107,9 @@ async def pie():
 
 @eth_bridge_router.get('/balance')
 async def bridge_ETH(bridge:str,start:str,end:str):
-    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base']
+    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle']
     if bridge not in choice_condition:
-        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base"]'
+        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle"]'
     elif bridge=="Arbitrum":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Optimism":
@@ -123,6 +123,8 @@ async def bridge_ETH(bridge:str,start:str,end:str):
     elif bridge=="Linea":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Base":
+        return Funtions.create_bridge(eth_bridge,bridge,start,end)
+    elif bridge=="Mantle":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
 
 # NEtflow api in here

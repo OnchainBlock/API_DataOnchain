@@ -234,3 +234,12 @@ async def balanceofstatisc_eachofbridge(bridge:str,token:str):
         return create_table_statis_eachofbridge(choice_df_statics('Synapse','USDC'))
     elif bridge=='Synapse' and token=='BUSD':
         return create_table_statis_eachofbridge(choice_df_statics('Synapse','BUSD'))
+
+@overview_router.get('/sortbridge')
+
+async def sort_overviewBridge():
+    data = pd.DataFrame({
+        'bridge':['Multichain','Celer','Hop','Stargate','Synapse'],
+        'tvl':[multichain_table.iloc[-1]['VALUE'], celer_table.iloc[-1]['VALUE'],hop_table.iloc[-1]['VALUE'],stargate_table.iloc[-1]['VALUE'],synapse_table.iloc[-1]['VALUE']]
+    })
+    return data.sort_values(by=['tvl'],ascending=False).to_dict(orient='records')

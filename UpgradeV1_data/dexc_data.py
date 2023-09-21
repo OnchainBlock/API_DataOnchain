@@ -41,12 +41,12 @@ def create_table(data):
     last_week = QK_Data[QK_Data['TIMESTAMP']==QK_Data['TIMESTAMP'].max() - datetime.timedelta(days=7)]
     last_month = QK_Data[QK_Data['TIMESTAMP']==QK_Data['TIMESTAMP'].max() - datetime.timedelta(days=30)]
     df_table = pd.DataFrame({
-        '24h_changeVL':[float(hientai['VALUE'])-float(lastday['VALUE'])],
-        '24h_per':[((float(hientai['VALUE'])-float(lastday['VALUE']))/float(hientai['VALUE']))*100],
-        '7D_changeVL':[float(hientai['VALUE'])-float(last_week['VALUE'])],
-        '7D_per':[((float(hientai['VALUE'])-float(last_week['VALUE']))/float(hientai['VALUE']))*100],
-        '30D_changeVL':[float(hientai['VALUE'])-float(last_month['VALUE'])],
-        '30D_per':[((float(hientai['VALUE'])-float(last_month['VALUE']))/float(hientai['VALUE']))*100],
+        'changeVL_24h':[float(hientai['VALUE'])-float(lastday['VALUE'])],
+        'per_24h':[((float(hientai['VALUE'])-float(lastday['VALUE']))/float(hientai['VALUE']))*100],
+        'changeVL_7d':[float(hientai['VALUE'])-float(last_week['VALUE'])],
+        'per_7D':[((float(hientai['VALUE'])-float(last_week['VALUE']))/float(hientai['VALUE']))*100],
+        'change_30d':[float(hientai['VALUE'])-float(last_month['VALUE'])],
+        'per_30D':[((float(hientai['VALUE'])-float(last_month['VALUE']))/float(hientai['VALUE']))*100],
     })
     return df_table.to_dict(orient='records')
 
@@ -62,12 +62,12 @@ def create_table_tusd(data):
     last_week = QK_Data[(QK_Data['TIMESTAMP'] == QK_Data['TIMESTAMP'].max()-datetime.timedelta(days=7))&(QK_Data['href']=='hyperlink')]['VALUE'].sum()
     last_month = QK_Data[(QK_Data['TIMESTAMP'] == QK_Data['TIMESTAMP'].max()-datetime.timedelta(days=30))&(QK_Data['href']=='hyperlink')]['VALUE'].sum()
     df_table = pd.DataFrame({
-        '24h_changeVL':[float(hientai)-float(last_day)],
-        '24h_per':[((float(hientai)-float(last_day))/float(hientai))*100],
-        '7D_changeVL':[float(hientai)-float(last_week)],
-        '7D_per':[((float(hientai)-float(last_week))/float(hientai))*100],
-        '30D_changeVL':[float(hientai)-float(last_month)],
-        '30D_per':[((float(hientai)-float(last_month))/float(hientai))*100],
+        'changeVL_24h':[float(hientai)-float(last_day)],
+        'per_24h':[((float(hientai)-float(last_day))/float(hientai))*100],
+        'changeVL_7d':[float(hientai)-float(last_week)],
+        'per_7D':[((float(hientai)-float(last_week))/float(hientai))*100],
+        'change_30d':[float(hientai)-float(last_month)],
+        'per_30D':[((float(hientai)-float(last_month))/float(hientai))*100],
     })
     return df_table.to_dict(orient='records')
 

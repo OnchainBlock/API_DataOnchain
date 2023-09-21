@@ -395,12 +395,12 @@ def create_table_bridge_st(data):
     lastweek = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=7)]['VALUE']
     lastmonth = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=30)]['VALUE']
     df_table = pd.DataFrame({
-        '24h_changeVL':[float(hientai)-float(lastday)],
-        '24h_per':[((float(hientai)-float(lastday))/float(hientai))*100],
-        '7D_changeVL':[float(hientai)-float(lastweek)],
-        '7D_per':[((float(hientai)-float(lastweek))/float(hientai))*100],
-        '30D_changeVL':[float(hientai)-float(lastmonth)],
-        '30D_per':[((float(hientai)-float(lastmonth))/float(hientai))*100],
+        'changeVL_24h':[float(hientai)-float(lastday)],
+        'per_24h':[((float(hientai)-float(lastday))/float(hientai))*100],
+        'changeVL_7d':[float(hientai)-float(lastweek)],
+        'per_7D':[((float(hientai)-float(lastweek))/float(hientai))*100],
+        'change_30d':[float(hientai)-float(lastmonth)],
+        'per_30D':[((float(hientai)-float(lastmonth))/float(hientai))*100],
     })
     return df_table.to_dict(orient='records')
 
@@ -477,12 +477,12 @@ def create_table_statis_eachofbridge(data):
     lastweek = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=7)]['VALUE']
     lastmonth = qk_data[qk_data['TIMESTAMP']== qk_data['TIMESTAMP'].max() - datetime.timedelta(days=30)]['VALUE']
     df_table = pd.DataFrame({
-        '24h_changeVL':[float(hientai)-float(lastday)],
-        '24h_per':[((float(hientai)-float(lastday))/float(hientai))*100],
-        '7D_changeVL':[float(hientai)-float(lastweek)],
-        '7D_per':[((float(hientai)-float(lastweek))/float(hientai))*100],
-        '30D_changeVL':[float(hientai)-float(lastmonth)],
-        '30D_per':[((float(hientai)-float(lastmonth))/float(hientai))*100],
+        'changeVL_24h':[float(hientai)-float(lastday)],
+        'per_24h':[((float(hientai)-float(lastday))/float(hientai))*100],
+        'changeVL_7d':[float(hientai)-float(lastweek)],
+        'per_7D':[((float(hientai)-float(lastweek))/float(hientai))*100],
+        'change_30d':[float(hientai)-float(lastmonth)],
+        'per_30D':[((float(hientai)-float(lastmonth))/float(hientai))*100],
     })
     return df_table.to_dict(orient='records')
 
