@@ -103,6 +103,7 @@ class Funtions():
 @eth_bridge_router.get('/pie')
 async def pie():
     df_pie = eth_bridge.loc[eth_bridge['time'] == eth_bridge['time'].max()][['value','bridge']].rename(columns={'value':'VALUE','bridge':'EXPLORER'})
+    df_pie = df_pie.sort_values(by=['VALUE'],ascending=False)
     return df_pie.to_dict(orient='records')
 
 @eth_bridge_router.get('/balance')
