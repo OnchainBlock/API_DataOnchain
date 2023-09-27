@@ -51,8 +51,8 @@ async def hightlight_exchange(chioce_days: int, label: str):
 
     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
                                    'ALL_HIENTAI', f'{chioce_days}D_ALL']]
-    DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
-        lambda x: numerize.numerize(x, 2))
+    # DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
+    #     lambda x: numerize.numerize(x, 2))
     DATA_CHANGE_SUM.drop(
         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
@@ -62,6 +62,8 @@ async def hightlight_exchange(chioce_days: int, label: str):
     DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
+    DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['VALUE'] * ( DATA_CHANGE_SUM['PERCENTAGE']/100)
+    DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['VALUE_SHOW'].map(lambda x : numerize.numerize(round(x,2)))
     if label == 'Deposit':
         result = DATA_CHANGE_SUM[DATA_CHANGE_SUM['PERCENTAGE']
                                  == DATA_CHANGE_SUM['PERCENTAGE'].max()]
