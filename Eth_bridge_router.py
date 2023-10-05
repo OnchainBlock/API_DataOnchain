@@ -81,7 +81,7 @@ class Funtions():
         Mantle = Funtions.func_netflow(eth_bridge,'Mantle')
         Manta = Funtions.func_netflow(eth_bridge,'Manta')
 
-        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle]
+        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
         data = pd.concat(data,axis=0)
         data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
