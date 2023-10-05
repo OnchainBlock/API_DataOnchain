@@ -79,6 +79,7 @@ class Funtions():
         Linea = Funtions.func_netflow(eth_bridge,'Linea')
         Base = Funtions.func_netflow(eth_bridge,'Base')
         Mantle = Funtions.func_netflow(eth_bridge,'Mantle')
+        Manta = Funtions.func_netflow(eth_bridge,'Manta')
 
         data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle]
         data = pd.concat(data,axis=0)
@@ -108,9 +109,9 @@ async def pie():
 
 @eth_bridge_router.get('/balance')
 async def bridge_ETH(bridge:str,start:str,end:str):
-    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle']
+    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle','Manta']
     if bridge not in choice_condition:
-        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle"]'
+        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle","Manta"]'
     elif bridge=="Arbitrum":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Optimism":
@@ -126,6 +127,8 @@ async def bridge_ETH(bridge:str,start:str,end:str):
     elif bridge=="Base":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Mantle":
+        return Funtions.create_bridge(eth_bridge,bridge,start,end)
+    elif bridge=="Manta":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
 
 # NEtflow api in here
@@ -190,9 +193,9 @@ def func_netflow(data,bridge:str) -> None:
 
 @eth_bridge_router.get('/Inflow_layer2')
 async def Inflow_layer2(start:str,end:str,label:str):
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle']
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta']
         if label not in choice_condition:
-                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle"]'
+                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta"]'
         
         else:
 
@@ -204,7 +207,8 @@ async def Inflow_layer2(start:str,end:str,label:str):
                 Linea = func_netflow(eth_bridge,'Linea')
                 Base = func_netflow(eth_bridge,'Base')
                 Mantle = func_netflow(eth_bridge,'Mantle')
-                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle]
+                Manta = func_netflow(eth_bridge,'Manta')
+                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
                 data = pd.concat(data,axis=0)
                 data = data[data['label']==label]
                 data = data[data['value']>0]
@@ -231,7 +235,8 @@ async def Outflow_layer2(start:str,end:str,label:str):
             Linea = func_netflow(eth_bridge,'Linea')
             Base = func_netflow(eth_bridge,'Base')
             Mantle = func_netflow(eth_bridge,'Mantle')
-            data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle]
+            Manta = func_netflow(eth_bridge,'Manta')
+            data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
             data = pd.concat(data,axis=0)
             data = data[data['label']==label]
             data = data[data['value']<0]
@@ -256,9 +261,9 @@ def func_layer2(eth_bridge,layer2:str):
 
 @eth_bridge_router.get('/balanceofL2')
 async def balanceofLayer2(layer2:str):
-    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle']
+    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle','Manta']
     if layer2 not in choice_condition:
-        return f'balance: {layer2} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle"]'
+        return f'balance: {layer2} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle","Manta"]'
     elif layer2=="Arbitrum":
         return func_layer2(eth_bridge,'Arbitrum')
     elif layer2=="Optimism":
@@ -275,3 +280,5 @@ async def balanceofLayer2(layer2:str):
         return func_layer2(eth_bridge,'Base')
     elif layer2=="Mantle":
         return func_layer2(eth_bridge,'Mantle')
+    elif layer2=="Manta":
+        return func_layer2(eth_bridge,'Manta')
