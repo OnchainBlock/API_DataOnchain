@@ -1,6 +1,26 @@
 import sys
-sys.path.append(r'D:\DATA\GIT\API_DataOnchain')
-from imports import *
+from fastapi import APIRouter
+from fastapi.openapi.utils import get_openapi
+from fastapi import FastAPI,Response
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+from dotenv.main import load_dotenv
+import os
+import re
+from typing import List
+from pathlib import Path
+import pandas as pd
+import plotly.express as px
+import numpy as np
+from numerize import numerize
+import datetime
+import _datetime
+from sqlalchemy import create_engine
+import pandas as pd
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+pd.options.mode.chained_assignment = None
+load_dotenv()
 
 my_server = os.environ['my_server']
 query_bridge = os.environ['query_multichain']
@@ -287,7 +307,7 @@ def create_Deposit_multichain(Deposit_mul):
     cols =['TIMESTAMP','Value','Name']
     concat_df_mul = concat_df_mul[cols]
     return concat_df_mul
-
+# print(create_Deposit_multichain(Deposit_mul))
 # HOP
 
 query_hop_bridge = os.environ['query_hop_bridge']
@@ -477,7 +497,7 @@ query_synapse = os.getenv('query_synapse_bridge')
 SYNAPSE = pd.read_sql(query_synapse,my_server)
 SYNAPSE['TIMESTAMP']=SYNAPSE['TIMESTAMP'].apply(lambda x : pd.to_datetime(x).floor('T'))
 SYNAPSE['TIMESTAMP'] = pd.to_datetime(SYNAPSE['TIMESTAMP'])
-print(SYNAPSE['EXPLORER'].unique())
+# print(SYNAPSE['EXPLORER'].unique())
 
 def create_df_deposit_synapse(SYNAPSE):
     SYNAPSE_ETH = SYNAPSE[SYNAPSE['EXPLORER']=='Ethereum']
@@ -540,4 +560,48 @@ def create_df_deposit_synapse(SYNAPSE):
     cols =['TIMESTAMP','Value','Name']
     concat_df_synapse = concat_df_synapse[cols]
     return concat_df_synapse
+
+def choice_Bridge(start:str,end:str,bridge_name:str):
+    choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
+    if bridge_name not in choice_condition:
+        return f'bridge_name: {bridge_name} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]'
+    elif bridge_name =="Multichain":
+        Deposit_multichain = create_Deposit_multichain(Deposit_mul)
+        Deposit_multichain = rename(Deposit_multichain)
+        Deposit_multichain['time'] = pd.to_datetime(Deposit_multichain['TIMESTAMP']).dt.date
+        Deposit_multichain['time'] = pd.to_datetime(Deposit_multichain['time'])
+        Deposit_multichain = Deposit_multichain[Deposit_multichain['time'].between(start,end)].drop(columns={'time'})
+        Deposit_multichain = Deposit_multichain.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        return Deposit_multichain
+    elif bridge_name =="Celer":
+        Deposit_celer = create_df_deposit_celer(Celer_cBridge)
+        Deposit_celer = rename(Deposit_celer)
+        Deposit_celer['time'] = pd.to_datetime(Deposit_celer['TIMESTAMP']).dt.date
+        Deposit_celer['time'] = pd.to_datetime(Deposit_celer['time'])
+        Deposit_celer = Deposit_celer[Deposit_celer['time'].between(start,end)].drop(columns={'time'})
+        Deposit_celer = Deposit_celer.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        return Deposit_celer
+    elif bridge_name=="Hop":
+        Deposit_hopbridge = create_df_deposit_hop(Deposit_hop)
+        Deposit_hopbridge = rename(Deposit_hopbridge)
+        Deposit_hopbridge['time'] = pd.to_datetime(Deposit_hopbridge['TIMESTAMP']).dt.date
+        Deposit_hopbridge['time'] = pd.to_datetime(Deposit_hopbridge['time'])
+        Deposit_hopbridge = Deposit_hopbridge[Deposit_hopbridge['time'].between(start,end)].drop(columns={'time'})
+        Deposit_hopbridge = Deposit_hopbridge.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        return Deposit_hopbridge.to_dict(orient="records")
+    elif bridge_name =="Stargate":
+        Deposit_stargate = create_df_deposit_stargate(STARGATE)
+        Deposit_stargate = rename(Deposit_stargate)
+        Deposit_stargate['time'] = pd.to_datetime(Deposit_stargate['TIMESTAMP']).dt.date
+        Deposit_stargate['time'] = pd.to_datetime(Deposit_stargate['time'])
+        Deposit_stargate = Deposit_stargate[Deposit_stargate['time'].between(start,end)].drop(columns={'time'})
+        Deposit_stargate = Deposit_stargate.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        return Deposit_stargate
+    elif bridge_name=="Synapse":
+        Deposit_synapse = create_df_deposit_synapse(SYNAPSE)
+        Deposit_synapse['time'] = pd.to_datetime(Deposit_synapse['TIMESTAMP']).dt.date
+        Deposit_synapse['time'] = pd.to_datetime(Deposit_synapse['time'])
+        Deposit_synapse = Deposit_synapse[Deposit_synapse['time'].between(start,end)].drop(columns={'time'})
+        Deposit_synapse= Deposit_synapse.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        return Deposit_synapse
 

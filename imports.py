@@ -1,7 +1,8 @@
 import sys
 from fastapi import APIRouter
 from fastapi.openapi.utils import get_openapi
-from fastapi import FastAPI
+from fastapi import FastAPI,Response
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from dotenv.main import load_dotenv
 import os
