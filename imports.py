@@ -1,4 +1,5 @@
 import sys
+import fastapi
 from fastapi import APIRouter
 from fastapi.openapi.utils import get_openapi
 from fastapi import FastAPI,Response
