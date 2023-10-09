@@ -78,8 +78,10 @@ class Funtions():
         Polygon = Funtions.func_netflow(eth_bridge,'Polygon')
         Linea = Funtions.func_netflow(eth_bridge,'Linea')
         Base = Funtions.func_netflow(eth_bridge,'Base')
+        Mantle = Funtions.func_netflow(eth_bridge,'Mantle')
+        Manta = Funtions.func_netflow(eth_bridge,'Manta')
 
-        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base]
+        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
         data = pd.concat(data,axis=0)
         data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
@@ -102,13 +104,14 @@ class Funtions():
 @eth_bridge_router.get('/pie')
 async def pie():
     df_pie = eth_bridge.loc[eth_bridge['time'] == eth_bridge['time'].max()][['value','bridge']].rename(columns={'value':'VALUE','bridge':'EXPLORER'})
+    df_pie = df_pie.sort_values(by=['VALUE'],ascending=False)
     return df_pie.to_dict(orient='records')
 
 @eth_bridge_router.get('/balance')
 async def bridge_ETH(bridge:str,start:str,end:str):
-    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base']
+    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle','Manta']
     if bridge not in choice_condition:
-        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base"]'
+        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle","Manta"]'
     elif bridge=="Arbitrum":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Optimism":
@@ -122,6 +125,10 @@ async def bridge_ETH(bridge:str,start:str,end:str):
     elif bridge=="Linea":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Base":
+        return Funtions.create_bridge(eth_bridge,bridge,start,end)
+    elif bridge=="Mantle":
+        return Funtions.create_bridge(eth_bridge,bridge,start,end)
+    elif bridge=="Manta":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
 
 # NEtflow api in here
@@ -185,24 +192,33 @@ def func_netflow(data,bridge:str) -> None:
         return data
 
 @eth_bridge_router.get('/Inflow_layer2')
-async def Inflow_layer2(start:str,end:str):
-        Arbitrum = func_netflow(eth_bridge,'Arbitrum')
-        Optimism = func_netflow(eth_bridge,'Optimism')
-        zkSync_Era = func_netflow(eth_bridge,'zkSync Era')
-        StarkNet = func_netflow(eth_bridge,'StarkNet')
-        Polygon = func_netflow(eth_bridge,'Polygon')
-        Linea = func_netflow(eth_bridge,'Linea')
-        Base = func_netflow(eth_bridge,'Base')
-        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base]
-        data = pd.concat(data,axis=0)
-        data = data[data['value']>0]
-        data = data.sort_values(by=['timestamp'],ascending=True)
-        data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
-        data['time_select'] = pd.to_datetime(data['time_select'])
-        data = data[data['time_select'].between(start,end)]
-        cols = ['timestamp','label','value','money']
-        data = data[cols]
-        return data.to_dict(orient="records")
+async def Inflow_layer2(start:str,end:str,label:str):
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta']
+        if label not in choice_condition:
+                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta"]'
+        
+        else:
+
+                Arbitrum = func_netflow(eth_bridge,'Arbitrum')
+                Optimism = func_netflow(eth_bridge,'Optimism')
+                zkSync_Era = func_netflow(eth_bridge,'zkSync Era')
+                StarkNet = func_netflow(eth_bridge,'StarkNet')
+                Polygon = func_netflow(eth_bridge,'Polygon')
+                Linea = func_netflow(eth_bridge,'Linea')
+                Base = func_netflow(eth_bridge,'Base')
+                Mantle = func_netflow(eth_bridge,'Mantle')
+                Manta = func_netflow(eth_bridge,'Manta')
+                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
+                data = pd.concat(data,axis=0)
+                data = data[data['label']==label]
+                data = data[data['value']>0]
+                data = data.sort_values(by=['timestamp'],ascending=True)
+                data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
+                data['time_select'] = pd.to_datetime(data['time_select'])
+                data = data[data['time_select'].between(start,end)]
+                cols = ['timestamp','label','value','money']
+                data = data[cols]
+                return data.to_dict(orient="records")
     
 @eth_bridge_router.get('/Outflow_layer2')
 async def Outflow_layer2(start:str,end:str):
@@ -223,33 +239,3 @@ async def Outflow_layer2(start:str,end:str):
         cols = ['timestamp','label','value','money']
         data = data[cols]
         return data.to_dict(orient="records")
-
-def func_layer2(eth_bridge,layer2:str):
-    data =eth_bridge[eth_bridge['time']== eth_bridge['time'].max()]
-    data = data[data['bridge']==layer2]
-    return pd.DataFrame({
-        'balanceofeth':data['value'],
-        'usd':data['value']*data['price']
-    }).to_dict(orient='records')
-
-@eth_bridge_router.get('/balanceofL2')
-def balanceofLayer2(layer2:str):
-    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle']
-    if layer2 not in choice_condition:
-        return f'balance: {layer2} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle"]'
-    elif layer2=="Arbitrum":
-        return func_layer2(eth_bridge,'Arbitrum')
-    elif layer2=="Optimism":
-        return func_layer2(eth_bridge,'Optimism')
-    elif layer2=="zkSync Era":
-        return func_layer2(eth_bridge,'zkSync Era')
-    elif layer2=="StarkNet":
-        return func_layer2(eth_bridge,'StarkNet')
-    elif layer2=="Polygon":
-        return func_layer2(eth_bridge,'Polygon')
-    elif layer2=="Linea":
-        return func_layer2(eth_bridge,'Linea')
-    elif layer2=="Base":
-        return func_layer2(eth_bridge,'Base')
-    elif layer2=="Mantle":
-        return func_layer2(eth_bridge,'Mantle')

@@ -72,7 +72,6 @@ async def hightlight_ETH(choice_days:int,label:str):
     eth_tmap = pd.concat([hientai_df,quakhu_df],axis=1)
     # eth_tmap['VALUE_SHOW'] = eth_tmap['value'].map(lambda x : numerize.numerize(x))
     eth_tmap['vl_change'] = (eth_tmap['value'] - eth_tmap['vl_qk'])
-    eth_tmap['VALUE_SHOW'] = eth_tmap['vl_change'].map(lambda x : numerize.numerize(x))
     eth_tmap['percentage'] = round((eth_tmap['vl_change']/eth_tmap['value']) *100,2)
     cols = ['balance','value','VALUE_SHOW','percentage']
     eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','percentage':'PERCENTAGE'})
@@ -203,27 +202,35 @@ def create_df_netflow():
 
 @eth_router.get('/eth/Inflow_exchange')
 async def Inflow_exchange(start:str,end:str,label:str):
-    data = create_df_netflow()
-    data = data[data['balance']==label]
-    data = data[data['netflow']>0]
-    data['time_select'] = pd.to_datetime(data['time']).dt.date
-    data['time_select'] = pd.to_datetime(data['time_select'])
-    data = data[data['time_select'].between(start,end)]
-    cols = ['time','balance','netflow','money']
-    data =data[cols]
-    return data.to_dict(orient='records')
+    choice_condition = ['Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
+    if label not in choice_condition:
+        return f'balance: {label} is not found, plase choice another ["Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
+    else:
+        data = create_df_netflow()
+        data = data[data['balance']==label]
+        data = data[data['netflow']>0]
+        data['time_select'] = pd.to_datetime(data['time']).dt.date
+        data['time_select'] = pd.to_datetime(data['time_select'])
+        data = data[data['time_select'].between(start,end)]
+        cols = ['time','balance','netflow','money']
+        data =data[cols].rename(columns={'time':'timestamp','balance':'label','netflow':'value'})
+        return data.to_dict(orient='records')
 
 @eth_router.get('/eth/Outflow_exchange')
 async def Outflow_exchange(start:str,end:str,label:str):
-    data = create_df_netflow()
-    data = data[data['balance']==label]
-    data = data[data['netflow']<0]
-    data['time_select'] = pd.to_datetime(data['time']).dt.date
-    data['time_select'] = pd.to_datetime(data['time_select'])
-    data = data[data['time_select'].between(start,end)]
-    cols = ['time','balance','netflow','money']
-    data =data[cols]
-    return data.to_dict(orient='records')
+    choice_condition = ['Binance', 'Bitfinex', 'Kraken', 'OKX', 'Gemini', 'Crypto.com','Bybit', 'Bithumb', 'Kucoin', 'Gate', 'Coinone', 'Houbi','Bitflyer', 'Korbit', 'Binance US', 'Coinbase', 'MEXC', 'Idex','Bitmex']
+    if label not in choice_condition:
+        return f'balance: {label} is not found, plase choice another ["Binance", "Bitfinex", "Kraken", "OKX", "Gemini", "Crypto.com","Bybit", "Bithumb", "Kucoin", "Gate", "Coinone", "Houbi","Bitflyer", "Korbit", "Binance US", "Coinbase", "MEXC", "Idex","Bitmex"]'
+    else:
+        data = create_df_netflow()
+        data = data[data['balance']==label]
+        data = data[data['netflow']<0]
+        data['time_select'] = pd.to_datetime(data['time']).dt.date
+        data['time_select'] = pd.to_datetime(data['time_select'])
+        data = data[data['time_select'].between(start,end)]
+        cols = ['time','balance','netflow','money']
+        data =data[cols].rename(columns={'time':'timestamp','balance':'label','netflow':'value'})
+        return data.to_dict(orient='records')
 
 @eth_router.get('/eth/NetFlow_exchange')
 async def Netflow_exchange(start:str,end:str):
@@ -232,5 +239,5 @@ async def Netflow_exchange(start:str,end:str):
     data['time_select'] = pd.to_datetime(data['time_select'])
     data = data[data['time_select'].between(start,end)]
     cols = ['time','balance','netflow','money']
-    data =data[cols]
+    data =data[cols].rename(columns={'time':'timestamp','balance':'label','netflow':'value'})
     return data.to_dict(orient='records')

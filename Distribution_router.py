@@ -32,11 +32,11 @@ def hightlight_exchange(chioce_days: int, label: str):
     QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
 
     Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
-                        ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+                        ][['Symbols','USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
     Last_data = Last_data.reset_index()
     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
         Last_data['USDC_Las'] + Last_data['BUSD_Las']
-
+    Last_data = Last_data.set_index('Symbols').reindex(Hientai_Data['Symbols']).reset_index()
     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
     DATA_CHANGE = DATA_CHANGE.fillna(0)
     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
@@ -51,7 +51,8 @@ def hightlight_exchange(chioce_days: int, label: str):
 
     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
                                    'ALL_HIENTAI', f'{chioce_days}D_ALL']]
-    
+    DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
+        lambda x: numerize.numerize(x, 2))
     DATA_CHANGE_SUM.drop(
         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
@@ -62,8 +63,6 @@ def hightlight_exchange(chioce_days: int, label: str):
         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
 
     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
-    DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['VALUE'] * ( DATA_CHANGE_SUM['PERCENTAGE']/100)
-    DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['VALUE_SHOW'].map(lambda x : numerize.numerize(round(x,2)))
     if label == 'Deposit':
         result = DATA_CHANGE_SUM[DATA_CHANGE_SUM['PERCENTAGE']
                                  == DATA_CHANGE_SUM['PERCENTAGE'].max()]
@@ -90,11 +89,11 @@ def Treemap(chioce_days:int, label:str):
     QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
 
     Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
-                        ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+                        ][['Symbols','USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
     Last_data = Last_data.reset_index()
     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
         Last_data['USDC_Las'] + Last_data['BUSD_Las']
-
+    Last_data = Last_data.set_index('Symbols').reindex(Hientai_Data['Symbols']).reset_index()
     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
     DATA_CHANGE = DATA_CHANGE.fillna(0)
     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
@@ -173,34 +172,92 @@ def Treemap(chioce_days:int, label:str):
         DATA_CHANGE_SUM = DATA_CHANGE_SUM.fillna('')
         return DATA_CHANGE_SUM.to_dict(orient='records')
 
-print(Treemap(1,'Usdc'))
+# async def Treemap(chioce_days: int, label: str):
 
-# @distribution_router.get('/Bridge/pie')
-# async def choice_bridge(label:str):
-#     cols = ['EXPLORER','VALUE']
-#     multichain = multichain_pie[multichain_pie['TIMESTAMP']==multichain_pie['TIMESTAMP'].max()]
-#     celer = celer_pie[celer_pie['TIMESTAMP']==celer_pie['TIMESTAMP'].max()]
-#     hop = hop_pie[hop_pie['TIMESTAMP']==hop_pie['TIMESTAMP'].max()]
-#     stargate = stargate_pie[stargate_pie['TIMESTAMP']==stargate_pie['TIMESTAMP'].max()]
-#     synapse = synapse_pie[synapse_pie['TIMESTAMP']==synapse_pie['TIMESTAMP'].max()]
-#     choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
-#     if label not in choice_condition:
-#         return f'label: {label} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]'
-#     elif label=='Multichain':
-#         multichain = multichain[cols]
-#         return multichain.to_dict(orient='records')
-#     elif label =='Celer':
-#         celer = celer[cols]
-#         return celer.to_dict(orient='records')
-#     elif label=="Hop":
-#         hop = hop[cols]
-#         return hop.to_dict(orient='records')
-#     elif label=='Stargate':
-#         stargate = stargate[cols]
-#         return stargate.to_dict(orient='records')
-#     elif label=='Synapse':
-#         synapse = synapse[cols]
-#         return synapse.to_dict(orient='records')
+#     Hientai_Data = data[data['TimeStamp'] == data['TimeStamp'].max()][[
+#         'Symbols', 'USDT', 'USDC', 'BUSD']]
+#     Hientai_Data = Hientai_Data.reset_index()
+#     Hientai_Data['ALL_HIENTAI'] = Hientai_Data['USDT'] + \
+#         Hientai_Data['USDC'] + Hientai_Data['BUSD']
+
+
+#     QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
+
+#     Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
+#                         ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+#     Last_data = Last_data.reset_index()
+#     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
+#         Last_data['USDC_Las'] + Last_data['BUSD_Las']
+
+#     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
+#     DATA_CHANGE = DATA_CHANGE.fillna(0)
+#     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
+#         (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT_Las'])*100
+#     DATA_CHANGE[f'{chioce_days}D_USDC'] = (
+#         (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC_Las'])*100
+#     DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
+#         (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD_Las'])*100
+#     DATA_CHANGE[f'{chioce_days}D_ALL'] = (
+#         (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_LAS'])*100
+#     DATA_CHANGE = DATA_CHANGE.fillna(0)
+#     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
+#                                    'ALL_HIENTAI', f'{chioce_days}D_ALL']]
+#     # DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
+#     #     lambda x: numerize.numerize(x, 2))
+#     DATA_CHANGE_SUM.drop(
+#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
+#         columns={f'{chioce_days}D_ALL': 'PERCENTAGE'})
+#     DATA_CHANGE_SUM['PERCENTAGE'] = DATA_CHANGE_SUM['PERCENTAGE'].map(
+#         lambda x: round(x, 2))
+#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
+#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
+#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
+
+#     if label == 'Usdt':
+#         return Funtion_Col_Processing(DATA_CHANGE,  'Symbols', 'USDT', f'{chioce_days}D_USDT', 'USDT').rename(
+#             columns={'USDT': 'VALUE'})[['Symbols', 'VALUE', 'PERCENTAGE']].to_dict(orient='records')
+
+#     elif label == 'Usdc':
+#         return Funtion_Col_Processing(DATA_CHANGE, 'Symbols', 'USDC', f'{chioce_days}D_USDC', 'USDC').rename(
+#             columns={'USDC': 'VALUE'})[['Symbols', 'VALUE', 'PERCENTAGE']].to_dict(orient='records')
+
+#     elif label == 'Busd':
+#         return Funtion_Col_Processing(DATA_CHANGE, 'Symbols', 'BUSD', f'{chioce_days}D_BUSD', 'BUSD').rename(
+#             columns={'BUSD': 'VALUE'})[['Symbols', 'VALUE', 'PERCENTAGE']].to_dict(orient='records')
+
+#     elif label == 'Total':
+#         return DATA_CHANGE_SUM.to_dict(orient='records')
+
+#     else:
+#         return f'Not found: {label} please choose [Usdt , Usdc, Busd, Total] '
+
+@distribution_router.get('/Bridge/pie')
+async def choice_bridge(label:str):
+    cols = ['EXPLORER','VALUE']
+    multichain = multichain_pie[multichain_pie['TIMESTAMP']==multichain_pie['TIMESTAMP'].max()]
+    celer = celer_pie[celer_pie['TIMESTAMP']==celer_pie['TIMESTAMP'].max()]
+    hop = hop_pie[hop_pie['TIMESTAMP']==hop_pie['TIMESTAMP'].max()]
+    stargate = stargate_pie[stargate_pie['TIMESTAMP']==stargate_pie['TIMESTAMP'].max()]
+    synapse = synapse_pie[synapse_pie['TIMESTAMP']==synapse_pie['TIMESTAMP'].max()]
+    choice_condition = ['Multichain','Celer','Hop','Stargate','Synapse']
+    if label not in choice_condition:
+        return f'label: {label} is not found, plase choice another ["Multichain","Celer","Hop","Stargate","Synapse"]'
+    elif label=='Multichain':
+        multichain = multichain[cols]
+        return multichain.to_dict(orient='records')
+    elif label =='Celer':
+        celer = celer[cols]
+        return celer.to_dict(orient='records')
+    elif label=="Hop":
+        hop = hop[cols]
+        return hop.to_dict(orient='records')
+    elif label=='Stargate':
+        stargate = stargate[cols]
+        return stargate.to_dict(orient='records')
+    elif label=='Synapse':
+        synapse = synapse[cols]
+        return synapse.to_dict(orient='records')
     
 # @distribution_router.get('/Bridge')
 # async def choice_bridge(start:str, end:str,label:str):
