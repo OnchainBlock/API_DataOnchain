@@ -223,3 +223,33 @@ async def Outflow_layer2(start:str,end:str):
         cols = ['timestamp','label','value','money']
         data = data[cols]
         return data.to_dict(orient="records")
+
+def func_layer2(eth_bridge,layer2:str):
+    data =eth_bridge[eth_bridge['time']== eth_bridge['time'].max()]
+    data = data[data['bridge']==layer2]
+    return pd.DataFrame({
+        'balanceofeth':data['value'],
+        'usd':data['value']*data['price']
+    }).to_dict(orient='records')
+
+@eth_bridge_router.get('/balanceofL2')
+def balanceofLayer2(layer2:str):
+    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle']
+    if layer2 not in choice_condition:
+        return f'balance: {layer2} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle"]'
+    elif layer2=="Arbitrum":
+        return func_layer2(eth_bridge,'Arbitrum')
+    elif layer2=="Optimism":
+        return func_layer2(eth_bridge,'Optimism')
+    elif layer2=="zkSync Era":
+        return func_layer2(eth_bridge,'zkSync Era')
+    elif layer2=="StarkNet":
+        return func_layer2(eth_bridge,'StarkNet')
+    elif layer2=="Polygon":
+        return func_layer2(eth_bridge,'Polygon')
+    elif layer2=="Linea":
+        return func_layer2(eth_bridge,'Linea')
+    elif layer2=="Base":
+        return func_layer2(eth_bridge,'Base')
+    elif layer2=="Mantle":
+        return func_layer2(eth_bridge,'Mantle')
