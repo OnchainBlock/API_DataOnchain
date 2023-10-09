@@ -32,11 +32,11 @@ async def hightlight_exchange(chioce_days: int, label: str):
     QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
 
     Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
-                        ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+                        ][['Symbols','USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
     Last_data = Last_data.reset_index()
     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
         Last_data['USDC_Las'] + Last_data['BUSD_Las']
-
+    Last_data = Last_data.set_index('Symbols').reindex(Hientai_Data['Symbols']).reset_index()
     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
     DATA_CHANGE = DATA_CHANGE.fillna(0)
     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
@@ -90,11 +90,11 @@ async def Treemap(chioce_days: int, label: str):
     QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
 
     Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
-                        ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
+                        ][['Symbols','USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
     Last_data = Last_data.reset_index()
     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
         Last_data['USDC_Las'] + Last_data['BUSD_Las']
-
+    Last_data = Last_data.set_index('Symbols').reindex(Hientai_Data['Symbols']).reset_index()
     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
     DATA_CHANGE = DATA_CHANGE.fillna(0)
     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
