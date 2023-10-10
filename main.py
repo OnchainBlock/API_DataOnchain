@@ -11,6 +11,7 @@ from imports import *
 # from Eth_bridge_router import eth_bridge_router
 from Stablecoin_router import stablecoin_v1_router
 from L2_tx_overview_router import l2_tx_router
+from l2_arbitrum_router import arbitrum_router
 app = FastAPI()
 
 
@@ -56,5 +57,6 @@ app.openapi = custom_openapi
 # app.include_router(eth_bridge_router)
 app.include_router(stablecoin_v1_router)
 app.include_router(l2_tx_router)
+app.include_router(arbitrum_router)
 if __name__ == '__main__':
     uvicorn.run(app, port='8000')

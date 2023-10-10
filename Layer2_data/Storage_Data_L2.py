@@ -9,7 +9,7 @@ query_l2_tx = os.environ['query_l2']
 L2_eth = pd.read_sql(query_l2_tx,server)
 L2_eth['dt'] =  L2_eth['dt'].map(lambda x : x.replace(' UTC',''))
 L2_eth['dt'] = pd.to_datetime(L2_eth['dt']).dt.date
-condition_time = datetime.now().strftime('%Y-%m-%d')
+condition_time = datetime.datetime.now().strftime('%Y-%m-%d')
 #weekly
 weekly_df = L2_eth.copy()
 weekly_df['dt']= pd.to_datetime(weekly_df['dt'])
@@ -25,6 +25,20 @@ TVL_df = pd.read_sql(query_tvl,server)
 TVL_df['time'] = TVL_df['time'].apply(
     lambda x: pd.to_datetime(x).floor('T'))
 
+class create_dataframe():
+    def create_condition_df(l2:str,start:str,end:str):
+        data = L2_eth[L2_eth['chain']==l2]
+        data['dt'] = pd.to_datetime(data['dt'])
+        data = data[data['dt'].between(start,end)]
+        return data.to_dict(orient='records')
+    def choice_l2(l2:str,start:str,end:str):
+        choice_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base','mantle', 'linear', 'manta']
+        if l2 not in choice_condition:
+            return f'balance: {l2} is not found, plase choice another ["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta"]'
+        elif l2 in L2_eth['chain'].unique():
+            return create_dataframe.create_condition_df(l2,start,end)
+
+              
 #overview 
 def create_overview_Layer2(l2_tvl:str,l2_tx:str):
     tvl =TVL_df[TVL_df['time']==TVL_df['time'].max()]
