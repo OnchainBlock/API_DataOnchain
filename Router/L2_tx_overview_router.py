@@ -44,3 +44,9 @@ async def Weekly(l2:str,start:str,end:str):
 async def Weekly(l2:str,start:str,end:str):
     return Func_Layer2.Weekly(l2,start,end,'fee_tx')
 
+@l2_tx_router.get('/table')
+async def table():
+    return create_table_overview()
+@l2_tx_router.get('/treemap')
+def Treemap():
+    return treemap()

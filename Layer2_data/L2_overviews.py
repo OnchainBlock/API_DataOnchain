@@ -16,8 +16,31 @@ weekly_df =weekly_df.groupby(['chain']).resample('W', on='dt')[['eth_amount', 'u
                                            'volume_bridge', 'fee_volume', 'tx', 'chain']].sum(numeric_only=True).sort_values(by=['dt'],ascending=True).reset_index()
 
 weekly_df =weekly_df[weekly_df['dt']<= condition_time]
+#treemap
+def treemap():
+    data = L2_eth[L2_eth['dt']== L2_eth['dt'].max()].sort_values(by=['eth_amount'],ascending=False)[['chain','eth_amount']]
+    size =[500,250,150,100,60,40,32,30,26]
+    data['size'] = [i for i in size[:len(data)]]
+    return data.to_dict(orient="records")
 
+# overview table
+def create_table_overview():
+    table = L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max()].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
+    Qk_table =L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max() - datetime.timedelta(days=1)].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
+    volume_change =[vl - ql for vl,ql in zip(table['eth_amount'],Qk_table['eth_amount'])]
+    fee_change = [vl - ql for vl,ql in zip(table['fee_tx'],Qk_table['fee_tx'])]
+    tx_change = [vl - ql for vl,ql in zip(table['tx'],Qk_table['tx'])]
 
+    data = pd.DataFrame({
+        'chain':[i for i in table['chain']],
+        'vl_change':volume_change,
+        'fee_change':fee_change,
+        'tx_change':tx_change,
+        'per_vl':[round((qk/vl)*100,2) for qk,vl in zip(volume_change,table['eth_amount'])],
+        'per_fee':[round((qk/vl)*100,2) for qk,vl in zip(fee_change,table['fee_tx'])],
+        'per_tx':[round((qk/vl)*100,2) for qk,vl in zip(tx_change,table['tx'])]
+    })
+    return data.sort_values(by=['vl_change'],ascending=False).to_dict(orient="records")
 
 #create statics
 def create_statics_L2(l2:str):
