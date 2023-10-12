@@ -72,7 +72,6 @@ async def hightlight_ETH(choice_days:int,label:str):
     eth_tmap = pd.concat([hientai_df,quakhu_df],axis=1)
     # eth_tmap['VALUE_SHOW'] = eth_tmap['value'].map(lambda x : numerize.numerize(x))
     eth_tmap['vl_change'] = (eth_tmap['value'] - eth_tmap['vl_qk'])
-    eth_tmap['VALUE_SHOW'] = eth_tmap['vl_change'].map(lambda x : numerize.numerize(round(x,2)))
     eth_tmap['percentage'] = round((eth_tmap['vl_change']/eth_tmap['value']) *100,2)
     cols = ['balance','value','VALUE_SHOW','percentage']
     eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','percentage':'PERCENTAGE'})

@@ -212,7 +212,7 @@ async def choice_bridge(start:str, end:str,label:str):
         TOTAL_ASSETS_MULTICHAIN['TIME'] = pd.to_datetime(TOTAL_ASSETS_MULTICHAIN['TIME'])
         TOTAL_ASSETS_MULTICHAIN = TOTAL_ASSETS_MULTICHAIN[TOTAL_ASSETS_MULTICHAIN['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_MULTICHAIN = TOTAL_ASSETS_MULTICHAIN.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
-        TOTAL_ASSETS_MULTICHAIN['label'] = TOTAL_ASSETS_MULTICHAIN['label'].map(lambda x : x.replace('Optimsm','Optimism'))
+        TOTAL_ASSETS_MULTICHAIN['label']= TOTAL_ASSETS_MULTICHAIN['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return TOTAL_ASSETS_MULTICHAIN.to_dict(orient='records')
     elif label =="Celer":
         TOTAL_ASSETS_CELER = create_celer(Celer_cBridge)
@@ -220,7 +220,7 @@ async def choice_bridge(start:str, end:str,label:str):
         TOTAL_ASSETS_CELER['TIME'] = pd.to_datetime(TOTAL_ASSETS_CELER['TIME'])
         TOTAL_ASSETS_CELER = TOTAL_ASSETS_CELER[TOTAL_ASSETS_CELER['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_CELER  = TOTAL_ASSETS_CELER.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
-        TOTAL_ASSETS_CELER['label'] = TOTAL_ASSETS_CELER['label'].map(lambda x : x.replace('Optimsm','Optimism'))
+        TOTAL_ASSETS_CELER['label']= TOTAL_ASSETS_CELER['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return TOTAL_ASSETS_CELER.to_dict(orient='records')
     elif label =='Hop':
         TOTAL_ASSETS_HOP = create_hop(HOP)
@@ -228,7 +228,7 @@ async def choice_bridge(start:str, end:str,label:str):
         TOTAL_ASSETS_HOP['TIME'] = pd.to_datetime(TOTAL_ASSETS_HOP['TIME'])
         TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP[TOTAL_ASSETS_HOP['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_HOP = TOTAL_ASSETS_HOP.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
-        TOTAL_ASSETS_HOP['label'] = TOTAL_ASSETS_HOP['label'].map(lambda x : x.replace('Optimsm','Optimism'))
+        TOTAL_ASSETS_HOP['label']= TOTAL_ASSETS_HOP['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return TOTAL_ASSETS_HOP.to_dict(orient='records')
     elif label=='Stargate':
         TOTAL_ASSETS_STARGATE= create_starage(STARGATE)
@@ -236,7 +236,7 @@ async def choice_bridge(start:str, end:str,label:str):
         TOTAL_ASSETS_STARGATE['TIME'] = pd.to_datetime(TOTAL_ASSETS_STARGATE['TIME'])
         TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE[TOTAL_ASSETS_STARGATE['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_STARGATE = TOTAL_ASSETS_STARGATE.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
-        TOTAL_ASSETS_STARGATE['label'] = TOTAL_ASSETS_STARGATE['label'].map(lambda x : x.replace('Optimsm','Optimism'))
+        TOTAL_ASSETS_STARGATE['label']= TOTAL_ASSETS_STARGATE['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return TOTAL_ASSETS_STARGATE.to_dict(orient='records')
     elif label=='Synapse':
         TOTAL_ASSETS_SYNAPSE = create_synapse(SYNAPSE)
@@ -244,10 +244,5 @@ async def choice_bridge(start:str, end:str,label:str):
         TOTAL_ASSETS_SYNAPSE['TIME'] = pd.to_datetime(TOTAL_ASSETS_SYNAPSE['TIME'])
         TOTAL_ASSETS_SYNAPSE = TOTAL_ASSETS_SYNAPSE[TOTAL_ASSETS_SYNAPSE['TIME'].between(start,end)].drop(columns=['TIME'])
         TOTAL_ASSETS_SYNAPSE= TOTAL_ASSETS_SYNAPSE.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value','EXPLORER':'label'})
-        TOTAL_ASSETS_SYNAPSE['label'] = TOTAL_ASSETS_SYNAPSE['label'].map(lambda x : x.replace('Optimsm','Optimism'))
+        TOTAL_ASSETS_SYNAPSE['label']= TOTAL_ASSETS_SYNAPSE['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return TOTAL_ASSETS_SYNAPSE.to_dict(orient='records')
-
-
-
-
-

@@ -1,3 +1,6 @@
+import sys
+sys.path.append(r'/root/API_DataOnchain')
+
 from imports import *
 my_server = os.environ['my_server']
 query_cex = os.environ['query_cex']
@@ -13,5 +16,14 @@ data['Value'] = data['USDT'] + data['USDC']+data['BUSD']
 
 data = data[['TimeStamp', 'Symbols', 'Value']].rename(columns={'TimeStamp':'timestamp','Symbols':'label','Value':'value'})
 
+# Pie Funtions
+
+def pie_day():
+    pie_df = data[data['timestamp'] == data['timestamp'].max()]
+    pie_df = pie_df.sort_values(by='value', ascending=False)
+    pie_df = pie_df.drop(
+        pie_df[pie_df['value'] == 0.].index)
+    pie_df = pie_df.sort_values(by='value', ascending=False)
+    return pie_df.to_dict(orient='records')
 
 

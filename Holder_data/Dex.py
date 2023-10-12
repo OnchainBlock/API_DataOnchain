@@ -43,6 +43,7 @@ LUSD = LUSD.set_index('TIMESTAMP')
 query_tusd = os.environ['query_tusd_main']
 TUSD = pd.read_sql(query_tusd, my_server)
 
+
 TUSD['TIMESTAMP'] = TUSD['TIMESTAMP'].apply(
     lambda x: pd.to_datetime(x).floor('T'))
 TUSD["TIMESTAMP"] = pd.to_datetime(TUSD['TIMESTAMP'])

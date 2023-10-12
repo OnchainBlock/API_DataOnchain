@@ -1,6 +1,6 @@
 from imports import *
 # from Overview_data.Cex import data
-from Overview_data.Cex import data
+from Overview_data.Cex import *
 from Overview_data.Dexx import DAI_pie_df, LUSD_pie_df, Tusd_pie, DAI, LUSD, TUSD, Dex_pie
 from Distribution_Data.Bridge_data import TOTAL_MULTICHAIN,Celer_cBridge,HOP,STARGATE,SYNAPSE,Bridge_line
 from Distribution_Data.Bridge_data import *
@@ -30,34 +30,9 @@ async def choice_time(start: str, end: str, label: str):
 
 
 @overview_router.get('/Cex/pie')
-async def pie_day():
-    pie_df = data[data['timestamp'] == data['timestamp'].max()]
-    pie_df = pie_df.sort_values(by='value', ascending=False)
-    # others = pie_df[4:]
-    # others = pd.DataFrame({
-    #     'timestamp': others['timestamp'].unique(),
-    #     'label': ['Others'],
-    #     'value': others['value'].sum()
-    # })
-    # create_df = pd.concat([pie_df, others], ignore_index=True)
-    pie_df = pie_df.drop(
-        pie_df[pie_df['value'] == 0.].index)
-    pie_df = pie_df.sort_values(by='value', ascending=False)
-    return pie_df.to_dict(orient='records')
+async def v1_0():
+    return pie_day()
 
-# DEX
-
-
-# @overview_router.get('/Dex/pie')
-# async def pie_date(label: str):
-#     if label == 'Dai':
-#         return DAI_pie_df.to_dict(orient='records')
-#     elif label == 'Lusd':
-#         return LUSD_pie.to_dict(orient='records')
-#     elif label == 'Tusd':
-#         return Tusd_pie.to_dict(orient='records')
-#     else:
-#         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
 @overview_router.get('/Dex/pie')
 async def pie_date(label: str):
     if label == 'Dai':
@@ -99,6 +74,34 @@ async def choice_time(start: str, end: str, label: str):
 
     else:
         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
+# async def choice_time(start: str, end: str, label: str):
+#     if label == 'Lusd':
+#         LUSD_line = lusd_line(LUSD)
+#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIMESTAMP']).dt.date
+#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIME'])
+#         LUSD_line = LUSD_line[LUSD_line['TIME'].between(start,end)].drop(columns=['TIME'])
+#         LUSD_line = LUSD_line.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
+#         return LUSD_line.to_dict(orient='records')
+#     elif label == 'Dai':
+#         dai_df = Dai_line(DAI)
+#         dai_df['TIME'] = pd.to_datetime(dai_df['TIMESTAMP']).dt.date
+#         dai_df['TIME'] = pd.to_datetime(dai_df['TIME'])
+#         dai_df = dai_df[dai_df['TIME'].between(start,end)].drop(columns=['TIME'])
+#         dai_df = dai_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
+#         return dai_df.to_dict(orient='records')
+#     elif label == 'Tusd':
+#         tusd_df = Tusd_line(TUSD)
+#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIMESTAMP']).dt.date
+#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIME'])
+#         tusd_df = tusd_df[tusd_df['TIME'].between(start,end)].drop(columns=['TIME'])
+#         tusd_df = tusd_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
+#         return tusd_df.to_dict(orient='records')
+
+#     else:
+#         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
+
+
+# Bridge Overviews
 @overview_router.get('/Bridge/pie')
 async def create_bridge_pie():
     multichain = Bridge_line[Bridge_line['TIMESTAMP']==Bridge_line['TIMESTAMP'].max()]
