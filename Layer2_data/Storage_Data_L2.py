@@ -25,18 +25,36 @@ TVL_df = pd.read_sql(query_tvl,server)
 TVL_df['time'] = TVL_df['time'].apply(
     lambda x: pd.to_datetime(x).floor('T'))
 
-class create_dataframe():
-    def create_condition_df(l2:str,start:str,end:str):
-        data = L2_eth[L2_eth['chain']==l2]
+def tx_layer2_time(time:str,l2:str,start:str,end:str):
+    '''
+    content: chart transaction with have unique user, amount eth, fee
+    '''
+    choice_condition = ['daily','weekly']
+    if time not in choice_condition:
+        return f'balance: {time} is not found, plase choice another ["daily","weekly"]'
+    elif time =='daily':
+        data = L2_eth[L2_eth['chain']==l2][['dt','eth_amount','unique_users','fee_tx']]
         data['dt'] = pd.to_datetime(data['dt'])
         data = data[data['dt'].between(start,end)]
-        return data.to_dict(orient='records')
-    def choice_l2(l2:str,start:str,end:str):
-        choice_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base','mantle', 'linear', 'manta']
-        if l2 not in choice_condition:
-            return f'balance: {l2} is not found, plase choice another ["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta"]'
-        elif l2 in L2_eth['chain'].unique():
-            return create_dataframe.create_condition_df(l2,start,end)
+        return data.to_dict(orient="records")
+    elif time =='weekly':
+        data = weekly_df[weekly_df['chain']==l2][['dt','eth_amount','unique_users','fee_tx']]
+        data['dt'] = pd.to_datetime(data['dt'])
+        data = data[data['dt'].between(start,end)]
+        return data.to_dict(orient="records")
+
+# class create_dataframe():
+#     def create_condition_df(l2:str,start:str,end:str):
+#         data = L2_eth[L2_eth['chain']==l2]
+#         data['dt'] = pd.to_datetime(data['dt'])
+#         data = data[data['dt'].between(start,end)]
+#         return data.to_dict(orient='records')
+#     def choice_l2(l2:str,start:str,end:str):
+#         choice_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base','mantle', 'linear', 'manta']
+#         if l2 not in choice_condition:
+#             return f'balance: {l2} is not found, plase choice another ["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta"]'
+#         elif l2 in L2_eth['chain'].unique():
+#             return create_dataframe.create_condition_df(l2,start,end)
 
               
 #overview 
@@ -115,9 +133,9 @@ class Funtions_TVL():
         data = data[cols].rename(columns ={'time':'timestamp','bridge':'label','change':'value'})
         return data
     def Inflow_layer2(start:str,end:str,label:str):
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta']
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta','Scroll']
         if label not in choice_condition:
-                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta"]'
+                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta","Scroll"]'
         
         else:
 
@@ -130,7 +148,8 @@ class Funtions_TVL():
                 Base = Funtions_TVL.func_netflow('Base')
                 Mantle = Funtions_TVL.func_netflow('Mantle')
                 Manta = Funtions_TVL.func_netflow('Manta')
-                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
+                Scroll = Funtions_TVL.func_netflow('Scroll')
+                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta,Scroll]
                 data = pd.concat(data,axis=0)
                 data = data[data['label']==label]
                 data = data[data['value']>0]
@@ -142,9 +161,9 @@ class Funtions_TVL():
                 data = data[cols]
                 return data.to_dict(orient="records")
     def OutFlow(start:str,end:str,label:str):
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta']
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta','Scroll']
         if label not in choice_condition:
-                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta"]'
+                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta","Scroll"]'
         
         else:
 
@@ -157,7 +176,8 @@ class Funtions_TVL():
                 Base = Funtions_TVL.func_netflow('Base')
                 Mantle = Funtions_TVL.func_netflow('Mantle')
                 Manta = Funtions_TVL.func_netflow('Manta')
-                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
+                Scroll = Funtions_TVL.func_netflow('Scroll')
+                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta,Scroll]
                 data = pd.concat(data,axis=0)
                 data = data[data['label']==label]
                 data = data[data['value']<0]
