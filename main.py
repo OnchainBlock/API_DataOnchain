@@ -8,7 +8,7 @@ from imports import *
 # from ETH_router import eth_router
 # # from fastapi.openapi.utils import get_openapi
 # from Reserve_router import Reserve_router
-# from Eth_bridge_router import eth_bridge_router
+from Router.Eth_bridge_router import eth_bridge_router
 from Router.Stablecoin_router import stablecoin_v1_router
 from Router.L2_tx_overview_router import l2_tx_router
 from Router.l2_arbitrum_router import arbitrum_router
@@ -54,7 +54,7 @@ app.openapi = custom_openapi
 # app.include_router(change_router)
 # app.include_router(Holder_router)
 # app.include_router(eth_router)
-# app.include_router(eth_bridge_router)
+app.include_router(eth_bridge_router)
 app.include_router(stablecoin_v1_router)
 app.include_router(l2_tx_router)
 app.include_router(arbitrum_router)

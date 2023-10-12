@@ -80,8 +80,8 @@ class Funtions():
         Base = Funtions.func_netflow(eth_bridge,'Base')
         Mantle = Funtions.func_netflow(eth_bridge,'Mantle')
         Manta = Funtions.func_netflow(eth_bridge,'Manta')
-
-        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
+        Scroll = Funtions.func_netflow(eth_bridge,'Scroll')
+        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta,Scroll]
         data = pd.concat(data,axis=0)
         data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
@@ -109,9 +109,9 @@ async def pie():
 
 @eth_bridge_router.get('/balance')
 async def bridge_ETH(bridge:str,start:str,end:str):
-    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle','Manta']
+    choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base','Mantle','Manta','Scroll']
     if bridge not in choice_condition:
-        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle","Manta"]'
+        return f'balance: {bridge} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle","Manta","Scroll"]'
     elif bridge=="Arbitrum":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Optimism":
@@ -129,6 +129,8 @@ async def bridge_ETH(bridge:str,start:str,end:str):
     elif bridge=="Mantle":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
     elif bridge=="Manta":
+        return Funtions.create_bridge(eth_bridge,bridge,start,end)
+    elif bridge=="Scroll":
         return Funtions.create_bridge(eth_bridge,bridge,start,end)
 
 # NEtflow api in here
@@ -193,9 +195,9 @@ def func_netflow(data,bridge:str) -> None:
 
 @eth_bridge_router.get('/Inflow_layer2')
 async def Inflow_layer2(start:str,end:str,label:str):
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta']
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta','Scroll']
         if label not in choice_condition:
-                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta"]'
+                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta","Scroll"]'
         
         else:
 
@@ -208,7 +210,8 @@ async def Inflow_layer2(start:str,end:str,label:str):
                 Base = func_netflow(eth_bridge,'Base')
                 Mantle = func_netflow(eth_bridge,'Mantle')
                 Manta = func_netflow(eth_bridge,'Manta')
-                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta]
+                Scroll = func_netflow(eth_bridge,'Scroll')
+                data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta,Scroll]
                 data = pd.concat(data,axis=0)
                 data = data[data['label']==label]
                 data = data[data['value']>0]
@@ -221,21 +224,30 @@ async def Inflow_layer2(start:str,end:str,label:str):
                 return data.to_dict(orient="records")
     
 @eth_bridge_router.get('/Outflow_layer2')
-async def Outflow_layer2(start:str,end:str):
-        Arbitrum = func_netflow(eth_bridge,'Arbitrum')
-        Optimism = func_netflow(eth_bridge,'Optimism')
-        zkSync_Era = func_netflow(eth_bridge,'zkSync Era')
-        StarkNet = func_netflow(eth_bridge,'StarkNet')
-        Polygon = func_netflow(eth_bridge,'Polygon')
-        Linea = func_netflow(eth_bridge,'Linea')
-        Base = func_netflow(eth_bridge,'Base')
-        data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base]
-        data = pd.concat(data,axis=0)
-        data = data[data['value']<0]
-        data = data.sort_values(by=['timestamp'],ascending=True)
-        data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
-        data['time_select'] = pd.to_datetime(data['time_select'])
-        data = data[data['time_select'].between(start,end)]
-        cols = ['timestamp','label','value','money']
-        data = data[cols]
-        return data.to_dict(orient="records")
+async def Outflow_layer2(start:str,end:str,label:str):
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta','Scroll']
+        if label not in choice_condition:
+                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta","Scroll"]'
+        
+        else:
+            Arbitrum = func_netflow(eth_bridge,'Arbitrum')
+            Optimism = func_netflow(eth_bridge,'Optimism')
+            zkSync_Era = func_netflow(eth_bridge,'zkSync Era')
+            StarkNet = func_netflow(eth_bridge,'StarkNet')
+            Polygon = func_netflow(eth_bridge,'Polygon')
+            Linea = func_netflow(eth_bridge,'Linea')
+            Base = func_netflow(eth_bridge,'Base')
+            Mantle = func_netflow(eth_bridge,'Mantle')
+            Manta = func_netflow(eth_bridge,'Manta')
+            Scroll = func_netflow(eth_bridge,'Scroll')
+            data = [Arbitrum,Optimism,zkSync_Era,StarkNet,Polygon,Linea,Base,Mantle,Manta,Scroll]
+            data = pd.concat(data,axis=0)
+            data = data[data['label']==label]
+            data = data[data['value']<0]
+            data = data.sort_values(by=['timestamp'],ascending=True)
+            data['time_select'] = pd.to_datetime(data['timestamp']).dt.date
+            data['time_select'] = pd.to_datetime(data['time_select'])
+            data = data[data['time_select'].between(start,end)]
+            cols = ['timestamp','label','value','money']
+            data = data[cols]
+            return data.to_dict(orient="records")
