@@ -13,6 +13,13 @@ from Router.L2_tx_overview_router import l2_tx_router
 from Router.l2_arbitrum_router import arbitrum_router
 from Router.l2_starknet_router import starknet_router
 from Router.l2_zksync_era_router import zksync_router
+from Router.l2_optimism_router import optimism_router
+from Router.l2_polygon_router import polygon_router
+from Router.l2_base_router import base_router
+from Router.l2_linea_router import linea_router
+from Router.l2_mantle_router import mantle_router
+from Router.l2_manta_router import manta_router
+
 app = FastAPI()
 
 
@@ -73,8 +80,12 @@ app.include_router(l2_tx_router)
 app.include_router(arbitrum_router)
 app.include_router(starknet_router)
 app.include_router(zksync_router)
-
-
+app.include_router(optimism_router)
+app.include_router(polygon_router)
+app.include_router(base_router)
+app.include_router(linea_router)
+app.include_router(mantle_router)
+app.include_router(manta_router)
 if __name__ == '__main__':
     uvicorn.run(app,host='localhost')
 
