@@ -36,7 +36,7 @@ origins = [
     "https://cryptoviet-info.vercel.app",
     "https://dataonchain.xyz",
     "https://onchainblock.xyz",
-    # "45.76.183.129:3333"
+    "45.76.183.129:3333"
 ]
 app.add_middleware(
     CORSMiddleware,
