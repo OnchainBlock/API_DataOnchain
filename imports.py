@@ -1,4 +1,5 @@
 import sys
+from fastapi_cprofile.profiler import CProfileMiddleware
 import fastapi
 from fastapi import APIRouter
 from fastapi.openapi.utils import get_openapi
