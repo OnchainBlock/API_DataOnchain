@@ -73,10 +73,10 @@ async def hightlight_ETH(choice_days:int,label:str):
     # eth_tmap['VALUE_SHOW'] = eth_tmap['value'].map(lambda x : numerize.numerize(x))
     eth_tmap['vl_change'] = (eth_tmap['value'] - eth_tmap['vl_qk'])
     eth_tmap['percentage'] = round((eth_tmap['vl_change']/eth_tmap['value']) *100,2)
-    cols = ['balance','value','VALUE_SHOW','percentage']
+    cols = ['balance','value','percentage']
     eth_tmap= eth_tmap[cols].rename(columns={'balance':'Symbols','value':'VALUE','percentage':'PERCENTAGE'})
     eth_tmap =eth_tmap.drop(eth_tmap[eth_tmap['PERCENTAGE']==0.00].index)
-    cols = ['Symbols','VALUE','VALUE_SHOW','PERCENTAGE']
+    cols = ['Symbols','VALUE','PERCENTAGE']
     eth_tmap = eth_tmap[cols]
     eth_tmap = capitalize_column(eth_tmap,'Symbols')
     eth_tmap = change_name(eth_tmap,'Symbols')

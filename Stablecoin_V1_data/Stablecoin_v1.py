@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'/root/API_DataOnchain')
+sys.path.append(r'/Users/dev/Thang_DataEngineer/API_DataOnchain')
 from imports import *
 
 query_cexv1 = os.environ['query_cexall']
