@@ -80,12 +80,13 @@ class Funtions_TVL():
         pass
     
     def create_table(l2:str)->None:
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base']
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon',
+       'Linea', 'Base', 'Mantle', 'Manta', 'Scroll']
         if l2 not in choice_condition:
-            return f'balance: {l2} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base"]'
+            return f'balance: {l2} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle", "Manta", "Scroll"]'
         data_ht = TVL_df[TVL_df['time']==TVL_df['time'].max()].reset_index()
         create_qk = TVL_df.set_index('time')
-        create_qk= create_qk.between_time('6:00','8:00').reset_index()
+        create_qk= create_qk.between_time('6:00','9:00').reset_index()
         create_qk['time']= pd.to_datetime(create_qk['time']).dt.date
         data_qk_24 = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(1)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
         data = pd.concat([data_ht,data_qk_24],axis=1).drop(columns={'index'})
@@ -94,8 +95,8 @@ class Funtions_TVL():
         data_qk7d = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(7)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
         if data_qk7d['qk_vl'].empty :
                     data7D = pd.DataFrame({
-                        'cvl_7D':['comming soon'],
-                        'pr_7D':['comming soon']
+                        'cvl_7D':['-'],
+                        'pr_7D':['-']
                     })
         else:
             data7D = pd.concat([data_ht,data_qk7d],axis=1).drop(columns={'index'})
@@ -107,8 +108,8 @@ class Funtions_TVL():
         data_qk30d = create_qk[create_qk['time'] == create_qk['time'].max()- datetime.timedelta(30)][['value']].rename(columns={'value':'qk_vl'}).reset_index()
         if data_qk30d['qk_vl'].empty :
             data30D = pd.DataFrame({
-                'cvl_30D':['comming soon'],
-                'pr_30D':['comming soon']
+                'cvl_30D':['-'],
+                'pr_30D':['-']
             })
         else:
             data30D = pd.concat([data_ht,data_qk30d],axis=1).drop(columns={'index'})
@@ -133,9 +134,10 @@ class Funtions_TVL():
         data = data[cols].rename(columns ={'time':'timestamp','bridge':'label','change':'value'})
         return data
     def Inflow_layer2(start:str,end:str,label:str):
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon','Linea', 'Base', 'Mantle','Manta','Scroll']
+        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon',
+       'Linea', 'Base', 'Mantle', 'Manta', 'Scroll']
         if label not in choice_condition:
-                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base", "Mantle","Manta","Scroll"]'
+                return f'balance: {label} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle", "Manta", "Scroll"]'
         
         else:
 

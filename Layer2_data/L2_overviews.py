@@ -45,10 +45,10 @@ def create_table_overview():
 #create statics
 def create_statics_L2(l2:str):
     l2_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base',
-       'mantle', 'linear', 'manta']
+       'mantle', 'linear', 'manta','scroll']
     
     if l2 not in l2_condition:
-        return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta"]'
+        return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
     else:
         data = L2_eth[L2_eth['chain']==l2]
     return pd.DataFrame({
@@ -64,10 +64,10 @@ class Func_Layer2():
         pass
     def Daily(l2:str,start:str,end:str,col_condition:str):
         l2_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base',
-       'mantle', 'linear', 'manta']
+       'mantle', 'linear', 'manta','scroll']
     
         if l2 not in l2_condition:
-            return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta"]'
+            return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
         data = L2_eth[L2_eth['chain']==l2]
         data['time_select'] = pd.to_datetime(data['dt']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
@@ -86,10 +86,10 @@ class Func_Layer2():
             return data[cols].to_dict(orient="records")
     def Weekly(l2:str,start:str,end:str,col_condition:str):
         l2_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base',
-       'mantle', 'linear', 'manta']
+       'mantle', 'linear', 'manta','scroll']
     
         if l2 not in l2_condition:
-            return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta"]'
+            return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
         data = weekly_df[weekly_df['chain']==l2]
         data['time_select'] = pd.to_datetime(data['dt']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
