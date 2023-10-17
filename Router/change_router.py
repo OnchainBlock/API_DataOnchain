@@ -19,6 +19,7 @@ async def choice_Bridge(start:str,end:str,bridge_name:str):
         Deposit_multichain['time'] = pd.to_datetime(Deposit_multichain['time'])
         Deposit_multichain = Deposit_multichain[Deposit_multichain['time'].between(start,end)].drop(columns={'time'})
         Deposit_multichain = Deposit_multichain.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        Deposit_multichain['label']= Deposit_multichain['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return Deposit_multichain.to_dict(orient='records')
     elif bridge_name =="Celer":
         Deposit_celer = create_df_deposit_celer(Celer_cBridge)
@@ -27,6 +28,7 @@ async def choice_Bridge(start:str,end:str,bridge_name:str):
         Deposit_celer['time'] = pd.to_datetime(Deposit_celer['time'])
         Deposit_celer = Deposit_celer[Deposit_celer['time'].between(start,end)].drop(columns={'time'})
         Deposit_celer = Deposit_celer.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        Deposit_celer['label']= Deposit_celer['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return Deposit_celer.to_dict(orient='records')
     elif bridge_name=="Hop":
         Deposit_hopbridge = create_df_deposit_hop(Deposit_hop)
@@ -35,6 +37,7 @@ async def choice_Bridge(start:str,end:str,bridge_name:str):
         Deposit_hopbridge['time'] = pd.to_datetime(Deposit_hopbridge['time'])
         Deposit_hopbridge = Deposit_hopbridge[Deposit_hopbridge['time'].between(start,end)].drop(columns={'time'})
         Deposit_hopbridge = Deposit_hopbridge.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        Deposit_hopbridge['label']= Deposit_hopbridge['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return Deposit_hopbridge.to_dict(orient="records")
     elif bridge_name =="Stargate":
         Deposit_stargate = create_df_deposit_stargate(STARGATE)
@@ -43,6 +46,7 @@ async def choice_Bridge(start:str,end:str,bridge_name:str):
         Deposit_stargate['time'] = pd.to_datetime(Deposit_stargate['time'])
         Deposit_stargate = Deposit_stargate[Deposit_stargate['time'].between(start,end)].drop(columns={'time'})
         Deposit_stargate = Deposit_stargate.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        Deposit_stargate['label']= Deposit_stargate['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return Deposit_stargate.to_dict(orient='records')
     elif bridge_name=="Synapse":
         Deposit_synapse = create_df_deposit_synapse(SYNAPSE)
@@ -50,5 +54,6 @@ async def choice_Bridge(start:str,end:str,bridge_name:str):
         Deposit_synapse['time'] = pd.to_datetime(Deposit_synapse['time'])
         Deposit_synapse = Deposit_synapse[Deposit_synapse['time'].between(start,end)].drop(columns={'time'})
         Deposit_synapse= Deposit_synapse.rename(columns={'TIMESTAMP':'timestamp','Value':'value','Name':'label'})
+        Deposit_synapse['label']= Deposit_synapse['label'].map(lambda x : x.replace('Optimsm','Optimism'))
         return Deposit_synapse.to_dict(orient='records')
 
