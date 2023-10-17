@@ -1,5 +1,6 @@
 import sys
-sys.path.append(r'/Users/dev/Thang_DataEngineer/API_DataOnchain')
+sys.path.append(r'/root/API_DataOnchain')
+
 from imports import *
 from Router.change_router import change_router
 from Router.Distribution_router import distribution_router
@@ -89,6 +90,6 @@ app.include_router(zksync_router)
 app.include_router(manta_router)
 app.include_router(Scroll_router)
 if __name__ == '__main__':
-    uvicorn.run(app,host='localhost')
+    uvicorn.run(app,host='45.76.183.129')
 
 
