@@ -358,7 +358,7 @@ synapse_table = create_synapse(SYNAPSE)
 synapse_table = synapse_table.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()
 
 def create_table_bridge_st(data):
-    hientai = data[data['TIMESTAMP']== data['TIMESTAMP'].max()]
+    hientai = data[data['TIMESTAMP']== data['TIMESTAMP'].max()]['VALUE']
     # hientai = hientai.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()['VALUE']
     qk_data = data.set_index('TIMESTAMP')
     qk_data = qk_data.between_time('6:00', '10:59')
