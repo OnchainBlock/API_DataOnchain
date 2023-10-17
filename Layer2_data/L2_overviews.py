@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'/root/API_DataOnchain')
+sys.path.append(r'/Users/dev/Thang_DataEngineer/API_DataOnchain')
 from imports import *
 query_l2 = os.environ['query_l2']
 server = os.environ['my_server']
@@ -17,11 +17,27 @@ weekly_df =weekly_df.groupby(['chain']).resample('W', on='dt')[['eth_amount', 'u
 
 weekly_df =weekly_df[weekly_df['dt']<= condition_time]
 #treemap
-def treemap():
-    data = L2_eth[L2_eth['dt']== L2_eth['dt'].max()].sort_values(by=['eth_amount'],ascending=False)[['chain','eth_amount']]
-    size =[500,250,150,100,60,40,32,30,26]
-    data['size'] = [i for i in size[:len(data)]]
-    return data.to_dict(orient="records")
+def treemap(condition:str):
+    l2_condition = ['bridger','amount','fee','tx']
+    data = L2_eth.groupby(['chain']).agg({'eth_amount':'sum','unique_users':'sum','fee_tx':'sum','tx':'sum'}).sort_values(by=['tx'],ascending=False).reset_index()
+    if condition not in l2_condition:
+        return f'layer2: {condition} is not found, plase choice another["bridger","amount","fee","tx"]'
+    elif condition =='bridger':
+        size =[500,250,150,100,60,40,32,30,26,10]
+        data['size'] = [i for i in size[:len(data)]]
+        return data[['chain','unique_users','size']].to_dict(orient="records")
+    elif condition =='amount':
+        size =[500,250,150,100,60,40,32,30,26,10]
+        data['size'] = [i for i in size[:len(data)]]
+        return data[['chain','eth_amount','size']].to_dict(orient="records")
+    elif condition =='fee':
+        size =[500,250,150,100,60,40,32,30,26,10]
+        data['size'] = [i for i in size[:len(data)]]
+        return data[['chain','fee_tx','size']].to_dict(orient="records")
+    elif condition =='tx':
+        size =[500,250,150,100,60,40,32,30,26,10]
+        data['size'] = [i for i in size[:len(data)]]
+        return data[['chain','tx','size']].to_dict(orient="records")
 
 # overview table
 def create_table_overview():
@@ -43,20 +59,33 @@ def create_table_overview():
     return data.sort_values(by=['vl_change'],ascending=False).to_dict(orient="records")
 
 #create statics
-def create_statics_L2(l2:str):
-    l2_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base',
-       'mantle', 'linear', 'manta','scroll']
+# def create_statics_L2(l2:str):
+#     l2_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base',
+#        'mantle', 'linear', 'manta','scroll']
     
-    if l2 not in l2_condition:
-        return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
-    else:
-        data = L2_eth[L2_eth['chain']==l2]
-    return pd.DataFrame({
-        'Total_User':[sum(data['unique_users'])],
-        'Total_ETH':[sum(data['eth_amount'])],
-        'Total_Tx':[sum(data['tx'])],
-        'Total_Fee':[sum(data['fee_tx'])]
-    }).to_dict(orient="records")
+#     if l2 not in l2_condition:
+#         return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
+#     else:
+#         data = L2_eth[L2_eth['chain']==l2]
+#     return pd.DataFrame({
+#         'Total_User':[sum(data['unique_users'])],
+#         'Total_ETH':[sum(data['eth_amount'])],
+#         'Total_Tx':[sum(data['tx'])],
+#         'Total_Fee':[sum(data['fee_tx'])]
+#     }).to_dict(orient="records")
+def create_statics_L2(condition:str):
+    l2_condition = ['bridger','amount','fee','tx']
+    data = L2_eth[L2_eth['dt']== L2_eth['dt'].max()]
+    if condition not in l2_condition:
+        return f'layer2: {condition} is not found, plase choice another["bridger","amount","fee","tx"]'
+    elif condition =="bridger":
+        return data[['chain','unique_users']].to_dict(orient='records')
+    elif condition =="amount":
+        return data[['chain','eth_amount']].to_dict(orient='records')
+    elif condition =="fee":
+        return data[['chain','fee_tx']].to_dict(orient='records')
+    elif condition =="tx":
+        return data[['chain','tx']].to_dict(orient='records')
 
 # create dataFrame for 
 class Func_Layer2():
