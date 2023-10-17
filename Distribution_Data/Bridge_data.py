@@ -359,8 +359,8 @@ synapse_table = synapse_table.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_
 
 def create_table_bridge_st(data):
     hientai = data[data['TIMESTAMP']== data['TIMESTAMP'].max()]
-    hientai = hientai.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()['VALUE']
-    qk_data = multichain_table.set_index('TIMESTAMP')
+    # hientai = hientai.groupby(['TIMESTAMP']).agg({'VALUE':'sum'}).reset_index()['VALUE']
+    qk_data = data.set_index('TIMESTAMP')
     qk_data = qk_data.between_time('6:00', '10:59')
     qk_data = qk_data.reset_index()
     qk_data['TIMESTAMP'] = pd.to_datetime(qk_data['TIMESTAMP']).dt.date
