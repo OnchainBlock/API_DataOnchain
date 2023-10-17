@@ -89,6 +89,6 @@ app.include_router(zksync_router)
 app.include_router(manta_router)
 app.include_router(Scroll_router)
 if __name__ == '__main__':
-    uvicorn.run(app,host='45.76.183.129')
+    uvicorn.run(app,host='localhost')
 
 

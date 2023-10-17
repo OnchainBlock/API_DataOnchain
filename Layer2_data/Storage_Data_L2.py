@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'/root/API_DataOnchain')
+sys.path.append(r'/Users/dev/Thang_DataEngineer/API_DataOnchain')
 from imports import *
 
 server = os.environ['my_server']
@@ -25,6 +25,8 @@ TVL_df = pd.read_sql(query_tvl,server)
 TVL_df['time'] = TVL_df['time'].apply(
     lambda x: pd.to_datetime(x).floor('T'))
 
+def sort_label():
+    return TVL_df[TVL_df['time']== TVL_df['time'].max()].sort_values(by=['value'],ascending=False)[['bridge']]
 def tx_layer2_time(time:str,l2:str,start:str,end:str):
     '''
     content: chart transaction with have unique user, amount eth, fee
