@@ -38,28 +38,13 @@ def tx_layer2_time(time:str,l2:str,start:str,end:str):
         data = L2_eth[L2_eth['chain']==l2][['dt','eth_amount','unique_users','fee_tx']]
         data['dt'] = pd.to_datetime(data['dt'])
         data = data[data['dt'].between(start,end)]
-        return data.to_dict(orient="records")
+        return data.rename(columns={'dt':'timestamp'}).to_dict(orient="records")
     elif time =='weekly':
         data = weekly_df[weekly_df['chain']==l2][['dt','eth_amount','unique_users','fee_tx']]
         data['dt'] = pd.to_datetime(data['dt'])
         data = data[data['dt'].between(start,end)]
-        return data.to_dict(orient="records")
+        return data.rename(columns={'dt':'timestamp'}).to_dict(orient="records")
 
-# class create_dataframe():
-#     def create_condition_df(l2:str,start:str,end:str):
-#         data = L2_eth[L2_eth['chain']==l2]
-#         data['dt'] = pd.to_datetime(data['dt'])
-#         data = data[data['dt'].between(start,end)]
-#         return data.to_dict(orient='records')
-#     def choice_l2(l2:str,start:str,end:str):
-#         choice_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base','mantle', 'linear', 'manta']
-#         if l2 not in choice_condition:
-#             return f'balance: {l2} is not found, plase choice another ["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta"]'
-#         elif l2 in L2_eth['chain'].unique():
-#             return create_dataframe.create_condition_df(l2,start,end)
-
-              
-#overview 
 def create_overview_Layer2(l2_tvl:str,l2_tx:str):
     tvl =TVL_df[TVL_df['time']==TVL_df['time'].max()]
     tvl=tvl[tvl['bridge']==l2_tvl]['value'].values
