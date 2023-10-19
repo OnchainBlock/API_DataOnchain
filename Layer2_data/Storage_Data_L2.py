@@ -47,10 +47,11 @@ def tx_layer2_time(time:str,l2:str,start:str,end:str):
 
 def create_overview_Layer2(l2_tvl:str,l2_tx:str):
     tvl =TVL_df[TVL_df['time']==TVL_df['time'].max()]
-    tvl=tvl[tvl['bridge']==l2_tvl]['value'].values
+    tvl_value=tvl[tvl['bridge']==l2_tvl]['value'].values
     l2_tracking = L2_eth[L2_eth['chain']==l2_tx]
     return pd.DataFrame({
-        'Tvl':tvl,
+        'Tvl':tvl_value,
+        'Tvl_money': tvl_value* tvl['price'].unique(),
         'Total_User':[sum(l2_tracking['unique_users'])],
         'Total_ETH':[sum(l2_tracking['eth_amount'])],
         'Total_Tx':[sum(l2_tracking['tx'])],

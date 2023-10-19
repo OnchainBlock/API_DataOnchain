@@ -28,6 +28,7 @@ def treemap(condition:str):
     l2_condition = ['bridger','amount','fee','tx']
     data = L2_eth.groupby(['chain']).agg({'eth_amount':'sum','unique_users':'sum','fee_tx':'sum','tx':'sum'}).sort_values(by=['tx'],ascending=False).reset_index()
     data['chain'] = data['chain'].map(lambda x : x.title())
+    data['chain']= data['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
     if condition not in l2_condition:
         return f'layer2: {condition} is not found, plase choice another["bridger","amount","fee","tx"]'
     elif condition =='bridger':
@@ -51,6 +52,7 @@ def treemap(condition:str):
 def create_table_overview():
     table = L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max()].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
     table['chain']= table['chain'].map(lambda x : x.title())
+    table['chain']= table['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
     Qk_table =L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max() - datetime.timedelta(days=1)].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
     volume_change =[vl - ql for vl,ql in zip(table['eth_amount'],Qk_table['eth_amount'])]
     fee_change = [vl - ql for vl,ql in zip(table['fee_tx'],Qk_table['fee_tx'])]
@@ -73,6 +75,7 @@ def create_statics_L2(condition:str):
     l2_condition = ['bridger','amount','fee','tx']
     data = L2_eth[L2_eth['dt']== L2_eth['dt'].max()]
     data['chain'] = data['chain'].map(lambda x : x.title())
+    data['chain']= data['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
     if condition not in l2_condition:
         return f'layer2: {condition} is not found, plase choice another["bridger","amount","fee","tx"]'
     elif condition =="bridger":
@@ -96,6 +99,7 @@ class Func_Layer2():
             return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
         data = L2_eth[L2_eth['chain']==l2]
         data['chain']= data['chain'].map(lambda x: x.title())
+        data['chain']= data['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
         data['time_select'] = pd.to_datetime(data['dt']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
         data = data[data['time_select'].between(start,end)]
@@ -119,6 +123,7 @@ class Func_Layer2():
             return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
         data = weekly_df[weekly_df['chain']==l2]
         data['chain']= data['chain'].map(lambda x: x.title())
+        data['chain']= data['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
         data['time_select'] = pd.to_datetime(data['dt']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
         data = data[data['time_select'].between(start,end)]
