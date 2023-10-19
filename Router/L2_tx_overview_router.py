@@ -52,3 +52,4 @@ async def Weekly(l2:str,start:str,end:str):
 @l2_tx_router.get('/table')
 async def table():
     return create_table_overview()
+
