@@ -16,7 +16,7 @@ async def change_time():
 # statistic TVL
 @zksync_router.get('/overview_starknet')
 async def overview():
-    return create_overview_Layer2('zkSync Era','zk_era')
+    return create_overview_Layer2('zkSync Era','zkSync Era')
 #TVL
 @zksync_router.get('/TVL_dataframe')
 async def tvl(start:str,end:str):
@@ -32,8 +32,8 @@ async def Outflow(start:str, end:str):
 #transaction daily
 @zksync_router.get('/daily')
 async def daily(start:str,end:str):
-    return tx_layer2_time('daily','zk_era',start,end)
+    return tx_layer2_time('daily','zkSync Era',start,end)
 #transctiom weekly
 @zksync_router.get('/weekly')
 async def weekly(start:str,end:str):
-    return tx_layer2_time('weekly','zk_era',start,end)
+    return tx_layer2_time('weekly','zkSync Era',start,end)

@@ -17,7 +17,7 @@ async def change_time():
 # statistic TVL
 @manta_router.get('/overview_Manta')
 async def overview():
-    return create_overview_Layer2('Manta','manta')
+    return create_overview_Layer2('Manta','Manta')
 #TVL
 @manta_router.get('/TVL_dataframe')
 async def tvl(start:str,end:str):
@@ -33,10 +33,10 @@ async def Outflow(start:str, end:str):
 #transaction daily
 @manta_router.get('/daily')
 async def daily(start:str,end:str):
-    return tx_layer2_time('daily','manta',start,end)
+    return tx_layer2_time('daily','Manta',start,end)
 #transctiom weekly
 @manta_router.get('/weekly')
 async def weekly(start:str,end:str):
-    return tx_layer2_time('weekly','manta',start,end)
+    return tx_layer2_time('weekly','Manta',start,end)
 
 
