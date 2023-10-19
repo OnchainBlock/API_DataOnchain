@@ -51,8 +51,6 @@ def treemap(condition:str):
 # overview table
 def create_table_overview():
     table = L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max()].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
-    table['chain']= table['chain'].map(lambda x : x.title())
-    table['chain']= table['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
     Qk_table =L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max() - datetime.timedelta(days=1)].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
     volume_change =[vl - ql for vl,ql in zip(table['eth_amount'],Qk_table['eth_amount'])]
     fee_change = [vl - ql for vl,ql in zip(table['fee_tx'],Qk_table['fee_tx'])]
@@ -74,8 +72,6 @@ def create_table_overview():
 def create_statics_L2(condition:str):
     l2_condition = ['bridger','amount','fee','tx']
     data = L2_eth[L2_eth['dt']== L2_eth['dt'].max()]
-    data['chain'] = data['chain'].map(lambda x : x.title())
-    data['chain']= data['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
     if condition not in l2_condition:
         return f'layer2: {condition} is not found, plase choice another["bridger","amount","fee","tx"]'
     elif condition =="bridger":
@@ -92,14 +88,12 @@ class Func_Layer2():
     def __init__(self) -> None:
         pass
     def Daily(l2:str,start:str,end:str,col_condition:str):
-        l2_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base',
-       'mantle', 'linear', 'manta','scroll']
+        l2_condition = ['StarkNet', 'Arbitrum', 'Polygon', 'Optimism', 'zkSync Era',
+       'Base', 'Mantle', 'Linea', 'Manta', 'Scroll']
     
         if l2 not in l2_condition:
-            return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
+            return f'layer2: {l2} is not found, plase choice another["StarkNet", "Arbitrum", "Polygon", "Optimism", "zkSync Era","Base", "Mantle", "Linea", "Manta", "Scroll"]'
         data = L2_eth[L2_eth['chain']==l2]
-        data['chain']= data['chain'].map(lambda x: x.title())
-        data['chain']= data['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
         data['time_select'] = pd.to_datetime(data['dt']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
         data = data[data['time_select'].between(start,end)]
@@ -116,14 +110,12 @@ class Func_Layer2():
             cols =['dt','chain','fee_tx']
             return data[cols].rename(columns={'dt':'timestamp','chain':'label','fee_tx':'value'}).to_dict(orient="records")
     def Weekly(l2:str,start:str,end:str,col_condition:str):
-        l2_condition = ['starknet', 'arbitrum', 'polygon', 'optimsn', 'zk_era', 'base',
-       'mantle', 'linear', 'manta','scroll']
+        l2_condition = ['StarkNet', 'Arbitrum', 'Polygon', 'Optimism', 'zkSync Era',
+       'Base', 'Mantle', 'Linea', 'Manta', 'Scroll']
     
         if l2 not in l2_condition:
-            return f'layer2: {l2} is not found, plase choice another["starknet", "arbitrum", "polygon", "optimsn", "zk_era", "base","mantle", "linear", "manta","scroll"]'
+            return f'layer2: {l2} is not found, plase choice another["StarkNet", "Arbitrum", "Polygon", "Optimism", "zkSync Era","Base", "Mantle", "Linea", "Manta", "Scroll"]'
         data = weekly_df[weekly_df['chain']==l2]
-        data['chain']= data['chain'].map(lambda x: x.title())
-        data['chain']= data['chain'].replace({'Optimsn':'Optimism','Zk_Era':'zkSync Era'})
         data['time_select'] = pd.to_datetime(data['dt']).dt.date
         data['time_select'] = pd.to_datetime(data['time_select'])
         data = data[data['time_select'].between(start,end)]
@@ -139,3 +131,4 @@ class Func_Layer2():
         elif col_condition=='fee_tx':
             cols =['dt','chain','fee_tx']
             return data[cols].rename(columns={'dt':'timestamp','chain':'label','fee_tx':'value'}).to_dict(orient="records")
+

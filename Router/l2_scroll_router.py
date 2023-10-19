@@ -17,7 +17,7 @@ async def change_time():
 # statistic TVL
 @Scroll_router.get('/overview_Scroll')
 async def overview():
-    return create_overview_Layer2('Scroll','scroll')
+    return create_overview_Layer2('Scroll','Scroll')
 #TVL
 @Scroll_router.get('/TVL_dataframe')
 async def tvl(start:str,end:str):
@@ -33,11 +33,11 @@ async def Outflow(start:str, end:str):
 #transaction daily
 @Scroll_router.get('/daily')
 async def daily(start:str,end:str):
-    return tx_layer2_time('daily','scroll',start,end)
+    return tx_layer2_time('daily','Scroll',start,end)
 #transctiom weekly
 @Scroll_router.get('/weekly')
 async def weekly(start:str,end:str):
-    return tx_layer2_time('weekly','scroll',start,end)
+    return tx_layer2_time('weekly','Scroll',start,end)
 
 
 

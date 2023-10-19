@@ -17,7 +17,7 @@ async def change_time():
 # statistic TVL
 @starknet_router.get('/overview_starknet')
 async def overview():
-    return create_overview_Layer2('StarkNet','starknet')
+    return create_overview_Layer2('StarkNet','StarkNet')
 #TVL
 @starknet_router.get('/TVL_dataframe')
 async def tvl(start:str,end:str):
@@ -33,10 +33,10 @@ async def Outflow(start:str, end:str):
 #transaction daily
 @starknet_router.get('/daily')
 async def daily(start:str,end:str):
-    return tx_layer2_time('daily','starknet',start,end)
+    return tx_layer2_time('daily','StarkNet',start,end)
 #transctiom weekly
 @starknet_router.get('/weekly')
 async def weekly(start:str,end:str):
-    return tx_layer2_time('weekly','starknet',start,end)
+    return tx_layer2_time('weekly','StarkNet',start,end)
 
 
