@@ -74,31 +74,6 @@ async def choice_time(start: str, end: str, label: str):
 
     else:
         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
-# async def choice_time(start: str, end: str, label: str):
-#     if label == 'Lusd':
-#         LUSD_line = lusd_line(LUSD)
-#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIMESTAMP']).dt.date
-#         LUSD_line['TIME'] = pd.to_datetime(LUSD_line['TIME'])
-#         LUSD_line = LUSD_line[LUSD_line['TIME'].between(start,end)].drop(columns=['TIME'])
-#         LUSD_line = LUSD_line.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
-#         return LUSD_line.to_dict(orient='records')
-#     elif label == 'Dai':
-#         dai_df = Dai_line(DAI)
-#         dai_df['TIME'] = pd.to_datetime(dai_df['TIMESTAMP']).dt.date
-#         dai_df['TIME'] = pd.to_datetime(dai_df['TIME'])
-#         dai_df = dai_df[dai_df['TIME'].between(start,end)].drop(columns=['TIME'])
-#         dai_df = dai_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
-#         return dai_df.to_dict(orient='records')
-#     elif label == 'Tusd':
-#         tusd_df = Tusd_line(TUSD)
-#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIMESTAMP']).dt.date
-#         tusd_df['TIME'] = pd.to_datetime(tusd_df['TIME'])
-#         tusd_df = tusd_df[tusd_df['TIME'].between(start,end)].drop(columns=['TIME'])
-#         tusd_df = tusd_df.rename(columns={'TIMESTAMP':'timestamp','VALUE':'value'})
-#         return tusd_df.to_dict(orient='records')
-
-#     else:
-#         return {'status': 'fail', 'message': f'Label "{label}" not found.'}
 
 
 # Bridge Overviews

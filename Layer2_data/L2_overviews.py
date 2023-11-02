@@ -48,25 +48,25 @@ def treemap(condition:str):
         data['size'] = [i for i in size[:len(data)]]
         return data[['chain','tx','size']].rename(columns={'chain':'label','tx':'value'}).to_dict(orient="records")
 
-# overview table
-def create_table_overview():
-    table = L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max()].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
-    Qk_table =L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max() - datetime.timedelta(days=1)].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
-    volume_change =[vl - ql for vl,ql in zip(table['eth_amount'],Qk_table['eth_amount'])]
-    fee_change = [vl - ql for vl,ql in zip(table['fee_tx'],Qk_table['fee_tx'])]
-    tx_change = [vl - ql for vl,ql in zip(table['tx'],Qk_table['tx'])]
-    tvl =TVL_df[TVL_df['time']==TVL_df['time'].max()].sort_values(by=['bridge'],ascending=False)[['value']]
-    data = pd.DataFrame({
-        'chain':[i for i in table['chain']],
-        'tvl':[i for i in tvl['value']],
-        'vl_change':volume_change,
-        'fee_change':fee_change,
-        'tx_change':tx_change,
-        'per_vl':[round((qk/vl)*100,2) for qk,vl in zip(volume_change,table['eth_amount'])],
-        'per_fee':[round((qk/vl)*100,2) for qk,vl in zip(fee_change,table['fee_tx'])],
-        'per_tx':[round((qk/vl)*100,2) for qk,vl in zip(tx_change,table['tx'])]
-    })
-    return data.sort_values(by=['tvl'],ascending=False).to_dict(orient="records")
+# # overview table
+# def create_table_overview():
+#     table = L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max()].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
+#     Qk_table =L2_eth[L2_eth['dt'] ==  L2_eth['dt'].max() - datetime.timedelta(days=1)].sort_values(by=['chain'],ascending=False)[['eth_amount','fee_tx','tx','chain']]
+#     volume_change =[vl - ql for vl,ql in zip(table['eth_amount'],Qk_table['eth_amount'])]
+#     fee_change = [vl - ql for vl,ql in zip(table['fee_tx'],Qk_table['fee_tx'])]
+#     tx_change = [vl - ql for vl,ql in zip(table['tx'],Qk_table['tx'])]
+#     tvl =TVL_df[TVL_df['time']==TVL_df['time'].max()].sort_values(by=['bridge'],ascending=False)[['value']]
+#     data = pd.DataFrame({
+#         'chain':[i for i in table['chain']],
+#         'tvl':[i for i in tvl['value']],
+#         'vl_change':volume_change,
+#         'fee_change':fee_change,
+#         'tx_change':tx_change,
+#         'per_vl':[round((qk/vl)*100,2) for qk,vl in zip(volume_change,table['eth_amount'])],
+#         'per_fee':[round((qk/vl)*100,2) for qk,vl in zip(fee_change,table['fee_tx'])],
+#         'per_tx':[round((qk/vl)*100,2) for qk,vl in zip(tx_change,table['tx'])]
+#     })
+#     return data.sort_values(by=['tvl'],ascending=False).to_dict(orient="records")
 
 
 def create_statics_L2(condition:str):

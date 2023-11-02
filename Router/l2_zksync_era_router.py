@@ -24,11 +24,11 @@ async def tvl(start:str,end:str):
 #Inflow
 @zksync_router.get('/Inflow')
 async def Inflow(start:str,end:str):
-    return Funtions_TVL.Inflow_layer2(start,end,'zkSync Era')
+    return Funtions_TVL.Inflow_layer2(TVL_df,start,end,'zkSync Era')
 #outflow
 @zksync_router.get('/outflow')
 async def Outflow(start:str, end:str):
-    return Funtions_TVL.OutFlow(start,end,'zkSync Era')
+    return Funtions_TVL.OutFlow(TVL_df,start,end,'zkSync Era')
 #transaction daily
 @zksync_router.get('/daily')
 async def daily(start:str,end:str):

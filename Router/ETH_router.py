@@ -125,17 +125,6 @@ async def ETH_netflow(balance:str,start:str,end:str):
       
         return top1.to_dict(orient='records')
     
-# #netflow all balance
-# @eth_router.get('/eth/total_netflow')
-# async def ETH_reserve_total(start:str,end:str):
-#     df_total_line =ETH_psql.groupby(['time','price'])[['value']].agg({'value':'sum'}).reset_index()
-#     df_total_line['money'] = round(df_total_line['price']*df_total_line['value'],2)
-#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time']).dt.date
-#     df_total_line['time_select'] = pd.to_datetime(df_total_line['time_select'])
-#     df_total_line = df_total_line[df_total_line['time_select'].between(start,end)]
-#     cols = ['time','value','price','money']
-#     df_total_line = df_total_line[cols].rename(columns={'time':'timestamp'})
-#     return df_total_line.to_dict(orient='records')
 
 #reserve each of balance
 @eth_router.get('/eth/reserve')

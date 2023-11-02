@@ -19,6 +19,10 @@ my_server = create_engine(my_server)
 data = pd.read_sql(query_cex, my_server)
 data['TimeStamp'] = data['TimeStamp'].apply(
     lambda x: pd.to_datetime(x).floor('T'))
+data = data[data['Symbols'].isin(['Binance', 'Coinbase', 'FTX US', 'Bitstamp', 'Gate', 'MEXC',
+       'Binance US', 'CoinList', 'Crypto.com', 'Bitmex', 'Bitfinex',
+       'FTX', 'Houbi', 'Kucoin', 'OKX', 'Bittrex', 'Coinlist'])]
+
 QK_Data = data.set_index('TimeStamp')
 QK_Data = QK_Data.between_time('6:00', '10:59')
 QK_Data = QK_Data.reset_index()
@@ -86,145 +90,5 @@ def Funtion_Col_Processing_sum(data, symbol_col_name, value_col_name, percentage
     return data
 
 
-# def hightligt_exchange(data_qk, data_hientai, chioce_days: int, label: str):
-#     Hientai_Data = data_hientai[data_hientai['TimeStamp'] == data_hientai['TimeStamp'].max()][[
-#         'Symbols', 'USDT', 'USDC', 'BUSD']]
-#     Hientai_Data = Hientai_Data.reset_index()
-#     Hientai_Data['ALL_HIENTAI'] = Hientai_Data['USDT'] + \
-#         Hientai_Data['USDC'] + Hientai_Data['BUSD']
 
-#     data_qk['TimeStamp'] = pd.to_datetime(data_qk['TimeStamp']).dt.date
-
-#     Last_data = data_qk[(data_qk['TimeStamp'] == data_qk['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
-#                         ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
-#     Last_data = Last_data.reset_index()
-#     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
-#         Last_data['USDC_Las'] + Last_data['BUSD_Las']
-
-#     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
-#     DATA_CHANGE = DATA_CHANGE.fillna(0)
-#     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
-#         (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT_Las'])*100
-#     DATA_CHANGE[f'{chioce_days}D_USDC'] = (
-#         (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC_Las'])*100
-#     DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
-#         (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD_Las'])*100
-#     DATA_CHANGE[f'{chioce_days}D_ALL'] = (
-#         (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_LAS'])*100
-#     DATA_CHANGE = DATA_CHANGE.fillna(0)
-
-#     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
-#                                    'ALL_HIENTAI', f'{chioce_days}D_ALL']]
-#     DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
-#         lambda x: numerize.numerize(x, 2))
-#     DATA_CHANGE_SUM.drop(
-#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
-#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
-#         columns={f'{chioce_days}D_ALL': 'PERCENTAGE'})
-#     DATA_CHANGE_SUM['PERCENTAGE'] = DATA_CHANGE_SUM['PERCENTAGE'].map(
-#         lambda x: round(x, 2))
-#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
-#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
-#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
-#     if label == 'Deposit':
-#         return DATA_CHANGE_SUM['PERCENTAGE'].max()
-#     elif label == 'Withdraw':
-#         return DATA_CHANGE_SUM['PERCENTAGE'].min()
-#     else:
-#         return f'Not found: {label} please choose [ Deposit, Withdraw] '
-
-
-# print(hightligt_exchange(QK_Data, data, 1, 'Deposit'))
-
-
-# def Treemap(chioce_days: int, label: str):
-
-#     Hientai_Data = data[data['TimeStamp'] == data['TimeStamp'].max()][[
-#         'Symbols', 'USDT', 'USDC', 'BUSD']]
-#     Hientai_Data = Hientai_Data.reset_index()
-#     Hientai_Data['ALL_HIENTAI'] = Hientai_Data['USDT'] + \
-#         Hientai_Data['USDC'] + Hientai_Data['BUSD']
-        
-
-#     QK_Data['TimeStamp'] = pd.to_datetime(QK_Data['TimeStamp']).dt.date
-
-#     Last_data = QK_Data[(QK_Data['TimeStamp'] == QK_Data['TimeStamp'].max() - datetime.timedelta(days=chioce_days))
-#                         ][['USDT', 'USDC', 'BUSD']].rename(columns={"USDT": 'USDT_Las', 'USDC': 'USDC_Las', 'BUSD': 'BUSD_Las'})
-#     Last_data = Last_data.reset_index()
-#     Last_data['ALL_LAS'] = Last_data['USDT_Las'] + \
-#         Last_data['USDC_Las'] + Last_data['BUSD_Las']
-
-#     DATA_CHANGE = pd.concat([Hientai_Data, Last_data], axis=1)
-#     DATA_CHANGE = DATA_CHANGE.fillna(0)
-#     DATA_CHANGE[f'{chioce_days}D_USDT'] = (
-#         (DATA_CHANGE['USDT'] - DATA_CHANGE['USDT_Las'])/DATA_CHANGE['USDT'])*100
-#     DATA_CHANGE[f'{chioce_days}D_USDC'] = (
-#         (DATA_CHANGE['USDC'] - DATA_CHANGE['USDC_Las'])/DATA_CHANGE['USDC'])*100
-#     DATA_CHANGE[f'{chioce_days}D_BUSD'] = (
-#         (DATA_CHANGE['BUSD'] - DATA_CHANGE['BUSD_Las'])/DATA_CHANGE['BUSD'])*100
-#     DATA_CHANGE[f'{chioce_days}D_ALL'] = (
-#         (DATA_CHANGE['ALL_HIENTAI'] - DATA_CHANGE['ALL_LAS'])/DATA_CHANGE['ALL_HIENTAI'])*100
-    
-#     DATA_CHANGE = DATA_CHANGE.fillna(0)
-
-#     DATA_CHANGE_SUM = DATA_CHANGE[['Symbols',
-#                                    'ALL_HIENTAI', f'{chioce_days}D_ALL']]
-#     # DATA_CHANGE_SUM['VALUE_SHOW'] = DATA_CHANGE_SUM['ALL_HIENTAI'].map(
-#     #     lambda x: numerize.numerize(x, 2))
-#     DATA_CHANGE_SUM.drop(
-#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
-#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(
-#         columns={f'{chioce_days}D_ALL': 'PERCENTAGE'})
-#     DATA_CHANGE_SUM['PERCENTAGE'] = DATA_CHANGE_SUM['PERCENTAGE'].map(
-#         lambda x: round(x, 2))
-#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(
-#         DATA_CHANGE_SUM[DATA_CHANGE_SUM['ALL_HIENTAI'] == 0.].index)
-#     DATA_CHANGE_SUM = DATA_CHANGE_SUM.rename(columns={'ALL_HIENTAI': 'VALUE'})
-
-  
-#     if label =='Busd':
-#         cols_busd = ['Symbols','BUSD',f'{chioce_days}D_BUSD']
-#         BUSD = DATA_CHANGE[cols_busd]
-#         BUSD = BUSD.replace([np.inf, -np.inf], 0).fillna(0)
-#         BUSD = BUSD.drop(BUSD[BUSD[f'{chioce_days}D_BUSD'] == 0.00].index)
-#         BUSD[f'{chioce_days}D_BUSD'] = BUSD[f'{chioce_days}D_BUSD'].map(lambda x: round(x, 2))
-#         BUSD = BUSD.rename(columns={'BUSD':'VALUE',f'{chioce_days}D_BUSD':'PERCENTAGE'})
-#         BUSD['VL_CHANGE'] = abs(BUSD['VALUE']*(BUSD['PERCENTAGE']/100))
-       
-#         BUSD = BUSD.sort_values(by = ['VALUE'], ascending=False)
-#         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
-#         BUSD['size'] = [i for i in size[:len(BUSD)]]
-#         return BUSD
-#     elif label=='Usdc':
-#         cols_usdc = ['Symbols','USDC',f'{chioce_days}D_USDC']
-#         USDC = DATA_CHANGE[cols_usdc]
-#         USDC = USDC.replace([np.inf, -np.inf], 0).fillna(0)
-#         USDC = USDC.drop(USDC[USDC[f'{chioce_days}D_USDC'] == 0.00].index)
-#         USDC[f'{chioce_days}D_USDC'] = USDC[f'{chioce_days}D_USDC'].map(lambda x: round(x, 2))
-#         USDC = USDC.rename(columns={'USDC':'VALUE',f'{chioce_days}D_USDC':'PERCENTAGE'})
-#         USDC['VL_CHANGE'] = abs(USDC['VALUE']*(USDC['PERCENTAGE']/100))
-#         USDC = USDC.sort_values(by = ['VALUE'], ascending=False)
-#         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
-#         USDC['size'] = [i for i in size[:len(USDC)]]
-#         return USDC
-#     elif label=='Usdt':
-#         cols_usdt = ['Symbols','USDT',f'{chioce_days}D_USDT']
-#         USDT = DATA_CHANGE[cols_usdt]
-#         USDT = USDT.replace([np.inf, -np.inf], 0).fillna(0)
-#         USDT = USDT.drop(USDT[USDT[f'{chioce_days}D_USDT'] == 0.00].index)
-#         USDT[f'{chioce_days}D_USDT'] = USDT[f'{chioce_days}D_USDT'].map(lambda x: round(x, 2))
-#         USDT = USDT.rename(columns={'USDT':'VALUE',f'{chioce_days}D_USDT':'PERCENTAGE'})
-#         USDT['VL_CHANGE'] = abs(USDT['VALUE']*(USDT['PERCENTAGE']/100))
-#         USDT = USDT.sort_values(by = ['VALUE'], ascending=False)
-#         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
-#         USDT['size'] = [i for i in size[:len(USDT)]]
-#         return USDT
-#     elif label=="Total":
-#         DATA_CHANGE_SUM = DATA_CHANGE_SUM.replace([np.inf, -np.inf], 0).fillna(0)
-#         DATA_CHANGE_SUM = DATA_CHANGE_SUM.drop(DATA_CHANGE_SUM[DATA_CHANGE_SUM['PERCENTAGE'] == 0.00].index)
-#         DATA_CHANGE_SUM['VL_CHANGE'] = abs(DATA_CHANGE_SUM['VALUE']*(DATA_CHANGE_SUM['PERCENTAGE']/100))
-#         DATA_CHANGE_SUM = DATA_CHANGE_SUM.sort_values(by = ['VALUE'],ascending=False)
-#         size = [600,180,80,40,32,26,20,16,12,10,10,6,6]
-#         DATA_CHANGE_SUM['size'] = [i for i in size[:len(DATA_CHANGE_SUM)]]
-#         return DATA_CHANGE_SUM
 
