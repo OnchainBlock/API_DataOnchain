@@ -19,6 +19,9 @@ my_server = create_engine(my_server)
 data = pd.read_sql(query_cex, my_server)
 data['TimeStamp'] = data['TimeStamp'].apply(
     lambda x: pd.to_datetime(x).floor('T'))
+data = data[data['Symbols'].isin(['Binance', 'Coinbase', 'FTX US', 'Bitstamp', 'Gate', 'MEXC',
+       'Binance US', 'CoinList', 'Crypto.com', 'Bitmex', 'Bitfinex',
+       'FTX', 'Houbi', 'Kucoin', 'OKX', 'Bittrex', 'Coinlist'])]
 
 QK_Data = data.set_index('TimeStamp')
 QK_Data = QK_Data.between_time('6:00', '10:59')
