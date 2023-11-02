@@ -68,11 +68,9 @@ class Funtions_TVL():
         pass
     
     def create_table(l2:str)->None:
-        choice_condition = ['Arbitrum', 'Optimism', 'zkSync Era', 'StarkNet', 'Polygon',
-       'Linea', 'Base', 'Mantle', 'Manta', 'Scroll']
-        if l2 not in choice_condition:
-            return f'balance: {l2} is not found, plase choice another ["Arbitrum", "Optimism", "zkSync Era", "StarkNet", "Polygon","Linea", "Base","Mantle", "Manta", "Scroll"]'
-        data_ht = TVL_df[TVL_df['time']==TVL_df['time'].max()].reset_index()
+        
+        data_ht = TVL_df[TVL_df['time']==TVL_df['time'].max()].sort_values(by=['bridge'],ascending=False).reset_index()
+        data_ht_condition = data_ht.copy()
         create_qk = TVL_df.set_index('time')
         create_qk= create_qk.between_time('6:00','9:00').reset_index()
         create_qk['time']= pd.to_datetime(create_qk['time']).dt.date
@@ -112,9 +110,17 @@ class Funtions_TVL():
         df_table = df_table[cols_main]
         df_table = df_table.loc[:, ~df_table.columns.duplicated()]
         df_table = df_table.fillna('-')
-        return df_table.to_dict(orient="records")
-    def func_netflow(bridge:str) -> None:
-        data = TVL_df[TVL_df['bridge']==bridge]
+        df_table = df_table.sort_values(by=['balance'],ascending=False)
+        if l2 =="None":
+             
+            return df_table.to_dict(orient="records")
+        else:
+            df_table = df_table[df_table['bridge']==l2]
+            return df_table.to_dict(orient="records")
+        
+
+    def func_netflow(data,bridge:str) -> None:
+        data = data[data['bridge']==bridge]
         data['qk_value'] = data['value'].shift(1).fillna(0)
         data = data.iloc[2:]
         
