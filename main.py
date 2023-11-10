@@ -23,7 +23,7 @@ from Router.l2_linea_router import linea_router
 from Router.l2_mantle_router import mantle_router
 from Router.l2_manta_router import manta_router
 from Router.l2_scroll_router import Scroll_router
-
+from Router.FDUSD_router import fdusd_router
 app = FastAPI()
 
 
@@ -72,25 +72,26 @@ app.add_middleware(
 app.openapi = custom_openapi
 
 
-app.include_router(overview_router)
-app.include_router(distribution_router)
-app.include_router(Reserve_router)
-app.include_router(change_router)
-app.include_router(Holder_router)
-app.include_router(eth_router)
-app.include_router(eth_bridge_router)
-# # app.include_router(stablecoin_v1_router)
-app.include_router(l2_tx_router)
-# # app.include_router(arbitrum_router)
-app.include_router(starknet_router)
-app.include_router(zksync_router)
-# # app.include_router(optimism_router)
-# # app.include_router(polygon_router)
-# # app.include_router(base_router)
-# # app.include_router(linea_router)
-# # app.include_router(mantle_router)
-app.include_router(manta_router)
-app.include_router(Scroll_router)
+# app.include_router(overview_router)
+# app.include_router(distribution_router)
+# app.include_router(Reserve_router)
+# app.include_router(change_router)
+# app.include_router(Holder_router)
+# app.include_router(eth_router)
+# app.include_router(eth_bridge_router)
+# # # app.include_router(stablecoin_v1_router)
+# app.include_router(l2_tx_router)
+# # # app.include_router(arbitrum_router)
+# app.include_router(starknet_router)
+# app.include_router(zksync_router)
+# # # app.include_router(optimism_router)
+# # # app.include_router(polygon_router)
+# # # app.include_router(base_router)
+# # # app.include_router(linea_router)
+# # # app.include_router(mantle_router)
+# app.include_router(manta_router)
+# app.include_router(Scroll_router)
+app.include_router(fdusd_router)
 if __name__ == '__main__':
     uvicorn.run(app)
 
