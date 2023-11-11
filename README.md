@@ -121,8 +121,7 @@ The project uses environment variables for configuration. Create an .env file in
 
 ## Licensing
 
-This repository is not open-source and is subject to specific licensing terms as agreed upon between the owner and authorized users. Please refer to the LICENSE file within this repository for details on the terms of use.
-
+This repository is open source and is subject to specific license terms agreed between the owner and authorized users not to make any copies for personal use. Please refer to the LICENSE file in this repository for details on terms of use.
   
 ## Contact
 
