@@ -1,5 +1,5 @@
 # API_DataOnchain
-Welcome to the private repository for OnchainBlock Backend.
+Welcome to the public repository for OnchainBlock Backend.
 
 ## Description
 
@@ -114,7 +114,7 @@ The project is organized as follows:
 
 ## Configuration
 
-The project uses environment variables for configuration. Create .env file in both data and api folder in application folder and fill in the required values, in this part we are only processing data from DataHouse which means passed ELT (Extract, Load , and Transform ) from Datalake. The following variables are used:
+The project uses environment variables for configuration. Create an .env file in the application folder and fill in the required values, in this section we are only processing data from DataHouse, meaning transferred ELT (Extract, Load and Transform) from Datalake. The following variables are used, here the database is private if you want to see the data please [contact](contact@onchainblock.xyz)
 
 - server_PATH: The URI for connecting to the Postgres database.
 - table_PATH: The URI for connecting to table from database
